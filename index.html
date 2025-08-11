@@ -454,11 +454,17 @@
     }
 
     </style>
-</head>
 <body class="bg-gray-100 text-gray-800">
 
 <!-- HEADER -->
-<header class="bg-gradient-to-r from-blue-300 to-blue-200 shadow-md py-1 fixed top-0 left-0 right-0 z-30 border-b border-blue-400">
+<header class="bg-gradient-to-r from-blue-300 to-blue-200 shadow-md py-1 fixed top-0 left-0 right-0 z-30 border-b border-blue-400 flex items-center justify-center relative">
+  
+  <!-- Tombol Logout di kiri -->
+  <button id="logoutBtn" class="absolute right-2 px-2 py-1 bg-red-500 text-white rounded-md text-xs hover:bg-red-600 transition-colors">
+    X
+  </button>
+
+  <!-- Logo & Tulisan di tengah -->
   <div class="flex justify-center items-center space-x-1 text-sm leading-tight text-white">
     <img 
       src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Official_Logo_of_Sidenreng_Rappang_Regency.png/1044px-Official_Logo_of_Sidenreng_Rappang_Regency.png"
@@ -469,6 +475,7 @@
     <span id="loggedInDesa" class="ml-1 font-semibold capitalize text-gray-800"></span>
     <span id="loggedInEmail" class="ml-1 text-xs italic text-gray-600"></span>
   </div>
+
 </header>
 
 <!-- Fixed Top Bar -->
@@ -479,15 +486,12 @@
         <button id="zoomInBtn" class="font-control-btn" onclick="adjustFontSize(1)">+</button>
     </div>
 
-    <div class="flex items-center gap-0">
-        <span id="networkStatusIndicator" class="hidden">
-            <i class="fas"></i>
-            <span id="networkStatusText"></span>
-        </span>
-        <button id="logoutBtn" class="px-2 py-1 bg-red-500 text-white rounded-md text-xs hover:bg-red-600 transition-colors">X</button>
+    <div class="flex items-center gap-1 text-xs" id="networkStatusIndicator">
+        <i id="networkStatusIcon" class="fas fa-circle"></i>
+        <span id="networkStatusText"></span>
     </div>
 </div>
-
+</div>
 
 <!-- Main Content Area -->
 <div class="main-container max-w-4xl w-full bg-white p-2 rounded-xl shadow-lg md:p-4 mx-auto my-0 flex-grow overflow-y-auto hidden" style="margin-top: 60px; margin-bottom: 90px;">
@@ -3523,29 +3527,27 @@ async function downloadIndividualReportCsv() {
     }
 
     // Fungsi untuk memperbarui indikator status jaringan
-    function updateNetworkStatus() {
-    const networkStatusIndicator = document.getElementById('networkStatusIndicator');
-    const networkStatusIcon = networkStatusIndicator.querySelector('i');
+function updateNetworkStatus() {
+    const icon = document.getElementById('networkStatusIcon');
+    const text = document.getElementById('networkStatusText');
 
     if (navigator.onLine) {
-        // ONLINE → Wi-Fi hijau
-        networkStatusIcon.className = 'fas fa-wifi text-green-500';
+        icon.className = 'fas fa-circle text-green-500';
+        text.textContent = 'Online';
     } else {
-        // OFFLINE → Wi-Fi abu
-        networkStatusIcon.className = 'fas fa-wifi text-gray-400';
+        icon.className = 'fas fa-circle text-red-500';
+        text.textContent = 'Offline';
     }
-
-    networkStatusIndicator.classList.remove('hidden'); // Pastikan terlihat
 }
 
 // Jalankan saat halaman dibuka
 updateNetworkStatus();
 
-// Update saat status koneksi berubah
+// Event untuk update status saat koneksi berubah
 window.addEventListener('online', updateNetworkStatus);
 window.addEventListener('offline', updateNetworkStatus);
-
 </script>
+
 <!-- Login Modal -->
 <div id="loginModal" class="fixed inset-0 bg-gray-900 flex items-center justify-center z-50 hidden">
   <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm">

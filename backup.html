@@ -11,14 +11,13 @@
     <!-- Font Awesome CDN for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
- <link rel="manifest" href="./manifest.json">
+    <link rel="manifest" href="./manifest.json">
 
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Imunisasi TT">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
-    <link rel="apple-touch-startup-image" href="/icons/icon-512.png"> </head>
-
+    <link rel="apple-touch-startup-image" href="/icons/icon-512.png">
     <style>
         /* CSS Variables for Global Font Sizing */
         :root {
@@ -454,45 +453,127 @@
     }
 
     </style>
+</head>
 <body class="bg-gray-100 text-gray-800">
 
-<!-- HEADER -->
-<header class="bg-gradient-to-r from-blue-300 to-blue-200 shadow-md py-1 fixed top-0 left-0 right-0 z-30 border-b border-blue-400 flex items-center justify-center relative">
-  
-  <!-- Tombol Logout di kiri -->
-  <button id="logoutBtn" class="absolute right-2 px-2 py-1 bg-red-500 text-white rounded-md text-xs hover:bg-red-600 transition-colors">
-    X
-  </button>
+<!-- Fixed Top Bar -->
+<div id="topNavBar" 
+     class="fixed top-0 left-0 right-0 z-20 bg-gradient-to-r from-blue-100 to-blue-200 
+            px-2 py-1 shadow-md flex items-center justify-between 
+            rounded-bl-xl rounded-br-xl text-xs">
 
-  <!-- Logo & Tulisan di tengah -->
-  <div class="flex justify-center items-center space-x-1 text-sm leading-tight text-white">
+  <!-- Kiri: Logo + Judul -->
+  <div class="flex items-center gap-2">
     <img 
       src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Official_Logo_of_Sidenreng_Rappang_Regency.png/1044px-Official_Logo_of_Sidenreng_Rappang_Regency.png"
       alt="Logo Pemda Sidrap"
-      class="h-5 md:h-6 mr-1"
+      class="h-6 md:h-7"
     >
-    <span class="font-bold text-blue-800">siTTa -</span>
-    <span id="loggedInDesa" class="ml-1 font-semibold capitalize text-gray-800"></span>
-    <span id="loggedInEmail" class="ml-1 text-xs italic text-gray-600"></span>
+    <span class="font-bold text-blue-800 text-sm sm:text-base">siTTa</span>
   </div>
 
-</header>
+  <!-- Kanan: Network, User Info, Settings -->
+  <div class="flex items-center gap-2">
+    <!-- Network Status -->
+    <span id="networkStatusIndicator" class="hidden flex flex-col items-center text-gray-600">
+      <i class="fas"></i>
+      <span id="networkStatusText" class="text-[10px]"></span>
+    </span>
 
-<!-- Fixed Top Bar -->
-<div id="topNavBar" class="fixed left-0 right-0 z-20 bg-blue-100 p-2 shadow-md flex items-center justify-between rounded-bl-lg rounded-br-lg" style="top: 25px;">
-    <div class="flex items-center gap-0">
-        <button id="zoomOutBtn" class="font-control-btn" onclick="adjustFontSize(-1)">-</button>
-        <button id="resetZoomBtn" class="font-control-btn" onclick="adjustFontSize(0)">A</button>
-        <button id="zoomInBtn" class="font-control-btn" onclick="adjustFontSize(1)">+</button>
+    <!-- User Info -->
+    <div class="flex flex-col items-end leading-tight">
+      <span id="loggedInDesa" class="font-semibold text-gray-700"></span>
+      <span id="loggedInEmail" class="italic text-gray-500 text-[10px]"></span>
     </div>
 
-    <div class="flex items-center gap-1 text-xs" id="networkStatusIndicator">
-        <i id="networkStatusIcon" class="fas fa-circle"></i>
-        <span id="networkStatusText"></span>
-    </div>
-</div>
-</div>
+    <!-- Settings Menu -->
+    <div class="relative">
+      <button id="settingsBtn" 
+              class="px-2 py-1 bg-white border rounded hover:bg-gray-100">⚙️</button>
+      <!-- Dropdown -->
+      <div id="settingsDropdown" 
+           class="hidden absolute right-0 mt-2 w-44 bg-white border rounded shadow-md text-xs">
 
+ <!-- Label Font Size -->
+<div class="px-1 py-1 text-gray-600 text-[10px] font-semibold">Font Size</div>
+
+<!-- Font Size Controls (lebih besar) -->
+<div class="flex items-center gap-1 px-2 py-1">
+  <button id="zoomOutBtn" 
+          class="font-control-btn px-2 py-1 text-xs bg-gray-100 rounded hover:bg-gray-200" 
+          onclick="adjustFontSize(-1)">A-</button>
+  <button id="resetZoomBtn" 
+          class="font-control-btn px-2 py-1 text-xs bg-gray-100 rounded hover:bg-gray-200" 
+          onclick="adjustFontSize(0)">A</button>
+  <button id="zoomInBtn" 
+          class="font-control-btn px-2 py-1 text-xs bg-gray-100 rounded hover:bg-gray-200" 
+          onclick="adjustFontSize(1)">A+</button>
+</div>
+        <hr class="my-1">
+
+        <!-- Install PWA -->
+        <button id="installBtn" class="hidden block w-full px-2 py-1 hover:bg-gray-100 text-left">
+          📥 Install Aplikasi
+        </button>
+        <hr class="my-1">
+
+        <!-- Logout -->
+        <button id="logoutBtn" 
+                class="block w-full px-2 py-1 text-red-600 hover:bg-red-100 text-left">
+         [X]  Keluar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  // Toggle dropdown Settings
+  document.getElementById("settingsBtn").addEventListener("click", function() {
+    document.getElementById("settingsDropdown").classList.toggle("hidden");
+  });
+
+  // Tutup dropdown kalau klik di luar
+  document.addEventListener("click", function(e) {
+    const dropdown = document.getElementById("settingsDropdown");
+    const btn = document.getElementById("settingsBtn");
+    if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
+      dropdown.classList.add("hidden");
+    }
+  });
+
+  // Handle PWA Install
+  let deferredPrompt;
+  const installBtn = document.getElementById('installBtn');
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.classList.remove('hidden'); // tampilkan tombol install
+  });
+
+  installBtn.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      installBtn.classList.add('hidden');
+    }
+  });
+
+  // Pastikan desa & email tampil
+  window.addEventListener("DOMContentLoaded", () => {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const savedEmail = localStorage.getItem('userEmail') || '';
+
+    if (isLoggedIn && currentUserDesa) {
+      const desaEl = document.getElementById("loggedInDesa");
+      if (desaEl) desaEl.innerText = currentUserDesa;
+
+      const emailEl = document.getElementById("loggedInEmail");
+      if (emailEl) emailEl.innerText = savedEmail;
+    }
+  });
+</script>
 <!-- Main Content Area -->
 <div class="main-container max-w-4xl w-full bg-white p-2 rounded-xl shadow-lg md:p-4 mx-auto my-0 flex-grow overflow-y-auto hidden" style="margin-top: 60px; margin-bottom: 90px;">
     <!-- Tampilan Daftar Data -->
@@ -531,14 +612,14 @@
                 <input type="text" id="nama" required class="block w-full p-3 mb-1 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
                 
                 <label for="tanggalLahir" class="block mb-0 text-gray-700 font-medium">Tanggal Lahir:</label>
-                <input type="date" id="tanggalLahir" onchange="hitungUmur(); hitungStatusTT(); validateTanggalLahir();" class="block w-full p-3 mb-1 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                <input type="date" id="tanggalLahir" onchange="window.hitungUmur(); window.hitungStatusTT(); window.validateTanggalLahir();" class="block w-full p-3 mb-1 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
                 <span id="tanggalLahirError" class="text-red-500 text-xs mt-1"></span>
                 
                 <label for="umur" class="block mb-0 text-gray-700 font-medium">Umur:</label>
                 <input type="text" id="umur" readonly class="block w-full p-3 mb-1 border border-gray-300 rounded-lg text-gray-700 bg-gray-50 cursor-not-allowed">
 
                 <label for="nik" class="block mb-0 text-gray-700 font-medium">NIK:</label>
-                <input type="text" id="nik" required oninput="validateNik()" class="block w-full p-3 mb-1 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                <input type="text" id="nik" inputmode="numeric" pattern="[0-9]*" required oninput="window.validateNik()" class="block w-full p-3 mb-1 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
                 <span id="nikError" class="text-red-500 text-xs mt-1"></span>
 
                 <label for="desaKelurahan" class="block mb-0 text-gray-700 font-medium">Desa/Kelurahan:</label>
@@ -561,40 +642,40 @@
                 <textarea id="alamat" rows="2" class="block w-full p-3 mb-1 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"></textarea>
 
                 <label for="noHp" class="block mb-0 text-gray-700 font-medium">No. HP (untuk WhatsApp):</label>
-                <input type="text" id="noHp" placeholder="Contoh: 081234567890" oninput="hitungStatusTT(); validateNoHp();" class="block w-full p-3 mb-1 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                <input type="text" id="noHp" inputmode="numeric" pattern="[0-9]*" placeholder="Contoh: 081234567890" oninput="window.hitungStatusTT(); window.validateNoHp();" class="block w-full p-3 mb-1 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
                 <span id="noHpError" class="text-red-500 text-xs mt-1"></span>
 
                 <label for="tanggalLayanan" class="block mb-0 text-gray-700 font-medium">Tanggal Layanan:</label>
-                <input type="date" id="tanggalLayanan" onchange="hitungUmur(); hitungStatusTT();" class="block w-full p-3 mb-1 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                <input type="date" id="tanggalLayanan" onchange="window.hitungUmur(); window.hitungStatusTT();" class="block w-full p-3 mb-1 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
             </section>
 
             <section id="sectionBayi" class="bg-gray-50 p-6 mb-8 rounded-lg shadow-inner border border-gray-200">
                 <h2 class="font-semibold text-xl text-gray-700 border-b-2 border-blue-200 pb-3 mt-0 mb-3 md:text-2xl">1. Saat Bayi/Baduta</h2>
                 <label for="bayiStatus" class="block mb-0 text-gray-700 font-medium">Apakah pernah mendapatkan imunisasi TT saat bayi/baduta?</label>
-                <select id="bayiStatus" onchange="toggleSub('bayiStatus', 'subBayi'); hitungStatusTT()" class="block w-full p-3 mb-1 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                <select id="bayiStatus" onchange="window.toggleSub('bayiStatus', 'subBayi'); window.hitungStatusTT()" class="block w-full p-3 mb-1 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
                     <option value="Tidak" selected>Tidak</option>
                     <option value="Ya">Ya</option>
                 </select>
                 <div id="subBayi" class="subsection hidden ml-0 p-5 bg-blue-50 border-l-4 border-blue-300 rounded-lg mt-5">
                     <div class="flex items-center mb-3">
-                        <input type="checkbox" id="dpt1_checkbox" onchange="calculateAndFillDate('dpt1_checkbox', 'dpt1_date', 'month', 3); hitungStatusTT()" class="mr-2 h-5 w-5 text-green-600 rounded focus:ring-green-500">
+                        <input type="checkbox" id="dpt1_checkbox" onchange="window.calculateAndFillDate('dpt1_checkbox', 'dpt1_date', 'month', 3); window.hitungStatusTT()" class="mr-2 h-5 w-5 text-green-600 rounded focus:ring-green-500">
                         <label for="dpt1_checkbox" class="text-gray-700 font-medium flex-grow">DPT1 (Usia 3 bulan):</label>
-                        <input type="date" id="dpt1_date" onchange="hitungStatusTT()" class="flex-none p-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent w-1/2 md:w-auto">
+                        <input type="date" id="dpt1_date" onchange="window.hitungStatusTT()" class="flex-none p-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent w-1/2 md:w-auto">
                     </div>
                     <div class="flex items-center mb-3">
-                        <input type="checkbox" id="dpt2_checkbox" onchange="calculateAndFillDate('dpt2_checkbox', 'dpt2_date', 'month', 4); hitungStatusTT()" class="mr-2 h-5 w-5 text-green-600 rounded focus:ring-green-500">
+                        <input type="checkbox" id="dpt2_checkbox" onchange="window.calculateAndFillDate('dpt2_checkbox', 'dpt2_date', 'month', 4); window.hitungStatusTT()" class="mr-2 h-5 w-5 text-green-600 rounded focus:ring-green-500">
                         <label for="dpt2_checkbox" class="text-gray-700 font-medium flex-grow">DPT2 (Usia 4 bulan):</label>
-                        <input type="date" id="dpt2_date" onchange="hitungStatusTT()" class="flex-none p-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent w-1/2 md:w-auto">
+                        <input type="date" id="dpt2_date" onchange="window.hitungStatusTT()" class="flex-none p-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent w-1/2 md:w-auto">
                     </div>
                     <div class="flex items-center mb-3">
-                        <input type="checkbox" id="dpt3_checkbox" onchange="calculateAndFillDate('dpt3_checkbox', 'dpt3_date', 'month', 5); hitungStatusTT()" class="mr-2 h-5 w-5 text-green-600 rounded focus:ring-green-500">
+                        <input type="checkbox" id="dpt3_checkbox" onchange="window.calculateAndFillDate('dpt3_checkbox', 'dpt3_date', 'month', 5); window.hitungStatusTT()" class="mr-2 h-5 w-5 text-green-600 rounded focus:ring-green-500">
                         <label for="dpt3_checkbox" class="text-gray-700 font-medium flex-grow">DPT3 (Usia 5 bulan):</label>
-                        <input type="date" id="dpt3_date" onchange="hitungStatusTT()" class="flex-none p-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent w-1/2 md:w-auto">
+                        <input type="date" id="dpt3_date" onchange="window.hitungStatusTT()" class="flex-none p-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent w-1/2 md:w-auto">
                     </div>
                     <div class="flex items-center mb-3">
-                        <input type="checkbox" id="dpt4_checkbox" onchange="calculateAndFillDate('dpt4_checkbox', 'dpt4_date', 'month', 18); hitungStatusTT()" class="mr-2 h-5 w-5 text-green-600 rounded focus:ring-green-500">
+                        <input type="checkbox" id="dpt4_checkbox" onchange="window.calculateAndFillDate('dpt4_checkbox', 'dpt4_date', 'month', 18); window.hitungStatusTT()" class="mr-2 h-5 w-5 text-green-600 rounded focus:ring-green-500">
                         <label for="dpt4_checkbox" class="text-gray-700 font-medium flex-grow">DPT4 (Usia 18 bulan):</label>
-                        <input type="date" id="dpt4_date" onchange="hitungStatusTT()" class="flex-none p-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent w-1/2 md:w-auto">
+                        <input type="date" id="dpt4_date" onchange="window.hitungStatusTT()" class="flex-none p-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent w-1/2 md:w-auto">
                     </div>
                 </div>
             </section>
@@ -602,25 +683,25 @@
             <section id="sectionSekolah" class="bg-gray-50 p-6 mb-8 rounded-lg shadow-inner border border-gray-200">
                 <h2 class="font-semibold text-xl text-gray-700 border-b-2 border-blue-200 pb-3 mt-0 mb-3 md:text-2xl">2. Saat Sekolah (BIAS)</h2>
                 <label for="sekolahStatus" class="block mb-0 text-gray-700 font-medium">Apakah pernah mendapatkan imunisasi TT saat sekolah?</label>
-                <select id="sekolahStatus" onchange="toggleSub('sekolahStatus', 'subSekolah'); hitungStatusTT()" class="block w-full p-3 mb-1 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                <select id="sekolahStatus" onchange="window.toggleSub('sekolahStatus', 'subSekolah'); window.hitungStatusTT()" class="block w-full p-3 mb-1 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
                     <option value="Tidak" selected>Tidak</option>
                     <option value="Ya">Ya</option>
                 </select>
                 <div id="subSekolah" class="subsection hidden ml-0 p-5 bg-blue-50 border-l-4 border-blue-300 rounded-lg mt-5">
                     <div class="flex items-center mb-3">
-                        <input type="checkbox" id="kelas1_checkbox" onchange="calculateAndFillDate('kelas1_checkbox', 'kelas1_date', 'year', 7); hitungStatusTT()" class="mr-2 h-5 w-5 text-green-600 rounded focus:ring-green-500">
+                        <input type="checkbox" id="kelas1_checkbox" onchange="window.calculateAndFillDate('kelas1_checkbox', 'kelas1_date', 'year', 7); window.hitungStatusTT()" class="mr-2 h-5 w-5 text-green-600 rounded focus:ring-green-500">
                         <label for="kelas1_checkbox" class="text-gray-700 font-medium flex-grow">Kelas 1 (Usia 7 tahun):</label>
-                        <input type="date" id="kelas1_date" onchange="hitungStatusTT()" class="flex-none p-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent w-1/2 md:w-auto">
+                        <input type="date" id="kelas1_date" onchange="window.hitungStatusTT()" class="flex-none p-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent w-1/2 md:w-auto">
                     </div>
                     <div class="flex items-center mb-3">
-                        <input type="checkbox" id="kelas2_checkbox" onchange="calculateAndFillDate('kelas2_checkbox', 'kelas2_date', 'year', 8); hitungStatusTT()" class="mr-2 h-5 w-5 text-green-600 rounded focus:ring-green-500">
+                        <input type="checkbox" id="kelas2_checkbox" onchange="window.calculateAndFillDate('kelas2_checkbox', 'kelas2_date', 'year', 8); window.hitungStatusTT()" class="mr-2 h-5 w-5 text-green-600 rounded focus:ring-green-500">
                         <label for="kelas2_checkbox" class="text-gray-700 font-medium flex-grow">Kelas 2 (Usia 8 tahun):</label>
-                        <input type="date" id="kelas2_date" onchange="hitungStatusTT()" class="flex-none p-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent w-1/2 md:w-auto">
+                        <input type="date" id="kelas2_date" onchange="window.hitungStatusTT()" class="flex-none p-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent w-1/2 md:w-auto">
                     </div>
                     <div class="flex items-center mb-3">
-                        <input type="checkbox" id="kelas5_checkbox" onchange="calculateAndFillDate('kelas5_checkbox', 'kelas5_date', 'year', 11); hitungStatusTT()" class="mr-2 h-5 w-5 text-green-600 rounded focus:ring-green-500">
+                        <input type="checkbox" id="kelas5_checkbox" onchange="window.calculateAndFillDate('kelas5_checkbox', 'kelas5_date', 'year', 11); window.hitungStatusTT()" class="mr-2 h-5 w-5 text-green-600 rounded focus:ring-green-500">
                         <label for="kelas5_checkbox" class="text-gray-700 font-medium flex-grow">Kelas 5 (Usia 11 tahun):</label>
-                        <input type="date" id="kelas5_date" onchange="hitungStatusTT()" class="flex-none p-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent w-1/2 md:w-auto">
+                        <input type="date" id="kelas5_date" onchange="window.hitungStatusTT()" class="flex-none p-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent w-1/2 md:w-auto">
                     </div>
                 </div>
             </section>
@@ -628,10 +709,10 @@
             <section id="sectionCatin" class="bg-gray-50 p-6 mb-8 rounded-lg shadow-inner border border-gray-200">
                 <h2 class="font-semibold text-xl text-gray-700 border-b-2 border-blue-200 pb-3 mt-0 mb-3 md:text-2xl">3. Saat Calon Pengantin</h2>
                 <label for="catin1" class="block mb-0 text-gray-700 font-medium">Imunisasi pertama (tanggal):</label>
-                <input type="date" id="catin1" onchange="hitungStatusTT()" class="block w-full p-3 mb-1 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                <input type="date" id="catin1" onchange="window.hitungStatusTT()" class="block w-full p-3 mb-1 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
                 
                 <label for="catin2" class="block mb-0 text-gray-700 font-medium">Imunisasi kedua (tanggal):</label>
-                <input type="date" id="catin2" onchange="hitungStatusTT()" class="block w-full p-3 mb-1 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                <input type="date" id="catin2" onchange="window.hitungStatusTT()" class="block w-full p-3 mb-1 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
             </section>
 
             <section id="sectionHamil" class="bg-gray-50 p-6 mb-8 rounded-lg shadow-inner border border-gray-200">
@@ -639,11 +720,11 @@
                 <div id="hamilContainer">
                     <div class="hamil-entry mb-1 pb-2 border-b border-dashed border-gray-200 last:border-b-0 last:mb-0 last:pb-0">
                         <label class="block mb-0 text-gray-700 font-medium">Hamil anak ke-1 (tanggal):
-                            <input type="date" name="hamil[]" onchange="hitungStatusTT()" class="block w-full p-3 mt-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            <input type="date" name="hamil[]" onchange="window.hitungStatusTT()" class="block w-full p-3 mt-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
                         </label>
                     </div>
                 </div>
-                <button type="button" onclick="tambahKehamilan()" class="px-6 py-3 rounded-lg text-white font-medium text-lg cursor-pointer transition-all duration-300 ease-in-out mt-5 shadow-md hover:shadow-lg hover:translate-y-[-2px] bg-green-600 hover:bg-green-700 w-full md:w-auto">
+                <button type="button" onclick="window.tambahKehamilan()" class="px-6 py-3 rounded-lg text-white font-medium text-lg cursor-pointer transition-all duration-300 ease-in-out mt-5 shadow-md hover:shadow-lg hover:translate-y-[-2px] bg-green-600 hover:bg-green-700 w-full md:w-auto">
                     + Tambah Kehamilan
                 </button>
             </section>
@@ -654,12 +735,12 @@
                 <div id="lainnyaContainer">
                     <div class="lainnya-entry mb-1 pb-2 border-b border-dashed border-gray-200 last:border-b-0 last:mb-0 last:pb-0">
                         <label class="block mb-0 text-gray-700 font-medium">Tanggal Imunisasi:</label>
-                        <input type="date" name="lainnyaDate[]" onchange="hitungStatusTT()" class="block w-full p-3 mt-2 mb-1 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                        <input type="date" name="lainnyaDate[]" onchange="window.hitungStatusTT()" class="block w-full p-3 mt-2 mb-1 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
                         <label class="block mb-0 text-gray-700 font-medium">Keterangan:</label>
                         <textarea name="lainnyaKeterangan[]" rows="1" class="block w-full p-3 mt-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="Contoh: TT terjadwal, TT atas indikasi"></textarea>
                     </div>
                 </div>
-                <button type="button" onclick="tambahLainnya()" class="px-6 py-3 rounded-lg text-white font-medium text-lg cursor-pointer transition-all duration-300 ease-in-out mt-5 shadow-md hover:shadow-lg hover:translate-y-[-2px] bg-indigo-600 hover:bg-indigo-700 w-full md:w-auto">
+                <button type="button" onclick="window.tambahLainnya()" class="px-6 py-3 rounded-lg text-white font-medium text-lg cursor-pointer transition-all duration-300 ease-in-out mt-5 shadow-md hover:shadow-lg hover:translate-y-[-2px] bg-indigo-600 hover:bg-indigo-700 w-full md:w-auto">
                     + Tambah Lainnya
                 </button>
             </section>
@@ -778,7 +859,7 @@
         <div class="flex justify-end">
             <!-- New Edit button, initially hidden -->
             <button id="editFromAlertBtn" class="px-5 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors mr-3 hidden">Edit Data</button>
-            <button onclick="closeCustomAlert()" class="px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">OK</button>
+            <button onclick="window.closeCustomAlert()" class="px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">OK</button>
         </div>
     </div>
 </div>
@@ -815,7 +896,12 @@
         <section class="bg-gray-50 p-4 mb-6 rounded-lg shadow-inner border border-gray-200">
             <h4 class="font-semibold text-lg text-gray-700 border-b-2 border-blue-200 pb-2 mb-3">Catatan Tambahan</h4>
             <p id="detailCatatan" class="text-gray-700 whitespace-pre-wrap">Tidak ada catatan.</p>
+    <!-- Tambahan email penginput -->
+    <p class="text-gray-700 mt-2">
+      <strong>Email Penginput:</strong> <span id="detailUserEmail" class="font-medium"></span>
+    </p>
         </section>
+
     </div>
 <div class="fixed bottom-0 left-0 right-0 z-40 bg-white shadow-md border-t border-gray-300 px-4 py-3 flex justify-between max-w-2xl mx-auto">
     <!-- Tombol kiri: Hapus -->
@@ -826,7 +912,7 @@
     <!-- Tombol kanan: Edit dan Tutup -->
     <div class="flex gap-3">
         <button id="editFromFullModalBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md">Edit</button>
-        <button onclick="closeFullDetailModal()" class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-md">Tutup</button>
+        <button onclick="window.closeFullDetailModal()" class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-md">Tutup</button>
     </div>
 </div>
 
@@ -840,7 +926,7 @@
         <p id="confirmationMessage" class="text-gray-700 mb-6">Apakah Anda yakin ingin menghapus data ini secara permanen?</p>
         <div class="flex justify-end gap-3">
             <button id="confirmDeleteBtn" class="px-5 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors">Hapus</button>
-            <button onclick="closeConfirmationModal()" class="px-5 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 transition-colors">Batal</button>
+            <button onclick="window.closeConfirmationModal()" class="px-5 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 transition-colors">Batal</button>
         </div>
     </div>
 </div>
@@ -876,17 +962,54 @@
             <button id="confirmDownloadBtn" class="px-5 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
                 <i class="fas fa-download mr-2"></i> Unduh
             </button>
-            <button onclick="closeDownloadReportModal()" class="px-5 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 transition-colors">Batal</button>
+            <button onclick="window.closeDownloadReportModal()" class="px-5 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 transition-colors">Batal</button>
         </div>
     </div>
 </div>
-<script>
-    // GANTI DENGAN URL WEB APP GOOGLE SHEETS ANDA YANG BARU DARI CODE.GS!
-    const GOOGLE_SHEETS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzfwL7sz99xoBeKz_GU_hnamtfKeEPVm7QyY_-MVupn-jZTwE9uLpnPebeU18Ocu96vwg/exec'; // GANTI INI!
 
-    // KONFIGURASI: Berapa bulan data historis yang akan di-cache secara offline
-    // Jika Anda ingin SEMUA data di-cache secara offline (untuk pencarian penuh offline), atur angka yang sangat besar (misal: 9999)
-    const OFFLINE_CACHE_DURATION_MONTHS = 9999; 
+<!-- Firebase SDKs -->
+<script type="module">
+    // 1. Ganti Import Firebase yang Sesuai untuk Firestore
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import {
+        getFirestore,
+        collection,
+        addDoc,
+        getDocs,
+        enableIndexedDbPersistence,
+        doc, // Untuk operasi dokumen spesifik (update, delete)
+        updateDoc, // Untuk update dokumen
+        deleteDoc // Untuk delete dokumen
+    } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
+    // Konfigurasi Firebase Anda
+    const firebaseConfig = {
+      apiKey: "AIzaSyCN2Whqu5zGG1s0h5ZIb0kUlonPbISzuAg",
+      authDomain: "sitta-c02cf.firebaseapp.com",
+      projectId: "sitta-c02cf",
+      storageBucket: "sitta-c02cf.firebasestorage.app",
+      messagingSenderId: "992999217761",
+      appId: "1:992999217761:web:b457ef93ff2b3b7613e820"
+    };
+
+    // 2. Inisialisasi Firebase & Firestore
+    // Inisialisasi Firebase App
+    const app = initializeApp(firebaseConfig);
+    // Inisialisasi Firestore
+    const db = getFirestore(app);
+
+    // Aktifkan penyimpanan offline Firestore
+    enableIndexedDbPersistence(db).then(() => {
+        console.log("✅ Offline persistence aktif di Firestore");
+    }).catch((err) => {
+        if (err.code == 'failed-precondition') {
+            console.warn("Persistence tidak dapat diaktifkan: beberapa tab terbuka.");
+        } else if (err.code == 'unimplemented') {
+            console.warn("Persistence tidak didukung di browser ini.");
+        } else {
+            console.error("❌ Gagal mengaktifkan offline persistence:", err);
+        }
+    });
 
     let currentUserDesa = localStorage.getItem('userDesa') || null;
     let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'; // New flag for offline login
@@ -901,54 +1024,52 @@ if (loggedInEmailSpan && userEmail) {
 }
 
     // Fungsi untuk mengelola tampilan UI utama aplikasi (main content area dan login modal)
-    // Fungsi ini TIDAK lagi mengelola topNavBar dan mainNavBar
-    function setAppUI(showMainContent) {
+    // Semua fungsi yang dipanggil dari atribut HTML perlu dilampirkan ke objek `window`.
+    window.setAppUI = function(showMainContent) {
         const mainContainer = document.querySelector('.main-container');
         const loginModal = document.getElementById('loginModal');
 
         if (showMainContent) {
-            // Tampilkan area konten utama, sembunyikan modal login
             mainContainer.classList.remove('hidden');
             loginModal.classList.add('hidden');
         } else {
-            // Sembunyikan area konten utama, tampilkan modal login
             mainContainer.classList.add('hidden');
             loginModal.classList.remove('hidden');
         }
     }
 
     // Fungsi untuk menerapkan ukuran font yang disimpan atau default
-    function applyFontSize() {
+    window.applyFontSize = function() {
         const baseSize = 16 + (currentZoomLevel * 2); 
         document.documentElement.style.setProperty('--base-font-size', `${baseSize}px`);
-        updateFontSizeControls();
+        window.updateFontSizeControls();
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
-        console.log("[DOMContentLoaded] Fired.");
-        console.log("[DOMContentLoaded] Initial currentUserDesa from localStorage:", localStorage.getItem('userDesa'));
-        console.log("[DOMContentLoaded] Initial isLoggedIn from localStorage:", localStorage.getItem('isLoggedIn'));
-        console.log("[DOMContentLoaded] Parsed isLoggedIn variable:", isLoggedIn);
+window.addEventListener('DOMContentLoaded', () => {
+    console.log("[DOMContentLoaded] Fired.");
+    console.log("[DOMContentLoaded] Initial currentUserDesa from localStorage:", localStorage.getItem('userDesa'));
+    console.log("[DOMContentLoaded] Initial isLoggedIn from localStorage:", localStorage.getItem('isLoggedIn'));
+    console.log("[DOMContentLoaded] Parsed isLoggedIn variable:", isLoggedIn);
 
-        // Terapkan ukuran font segera setelah DOM dimuat
-        applyFontSize(); 
+    window.applyFontSize(); 
+    window.updateNetworkStatus(); 
 
-        // Update network status on load
-        updateNetworkStatus(); 
+    if (isLoggedIn && currentUserDesa) {
+        console.log("[DOMContentLoaded] Offline login successful. Showing main content.");
+        window.setAppUI(true);
+        window.showView('listView'); 
+        document.getElementById('loggedInDesa').innerText = currentUserDesa;
 
-        // Check for offline login status first
-        if (isLoggedIn && currentUserDesa) {
-            console.log("[DOMContentLoaded] Offline login successful. Showing main content.");
-            setAppUI(true); // Tampilkan main content area
-            // showView('listView') akan menangani visibilitas topNavBar dan mainNavBar
-            showView('listView'); 
-            document.getElementById('loggedInDesa').innerText = currentUserDesa;
-        } else {
-            console.log("[DOMContentLoaded] Offline login failed. Showing login modal.");
-            setAppUI(false); // Tampilkan modal login
-            // topNavBar dan mainNavBar akan tetap tersembunyi karena mainContainer hidden
-        }
-    });
+        // >>> tambahan untuk tampilkan email di header
+        const savedEmail = localStorage.getItem('userEmail') || '';
+        const emailEl = document.getElementById('loggedInEmail');
+        if (emailEl) emailEl.innerText = savedEmail;
+        // <<< selesai tambahan
+    } else {
+        console.log("[DOMContentLoaded] Offline login failed. Showing login modal.");
+        window.setAppUI(false);
+    }
+});
 
     // --- START: Hardcoded User Credentials ---
     const users = [
@@ -963,18 +1084,16 @@ if (loggedInEmailSpan && userEmail) {
         { desaKelurahan: "Mattirotasi", password: "usermattirotasi" },
         { desaKelurahan: "Uluale", password: "useruluale" },
         { desaKelurahan: "Luar Wilayah", password: "userluarwilayah" },
-        // Tambahkan pengguna lain di sini sesuai kebutuhan
     ];
     const ADMIN_DESA = "AdminPuskesmas";
     const ADMIN_PASSWORD = "adminpassword123";
     // --- END: Hardcoded User Credentials ---
 
-    async function handleLogin() {
+    window.handleLogin = async function() {
         const desa = document.getElementById('loginDesa').value.trim();
         const pass = document.getElementById('loginPassword').value.trim();
         const loginErrorMessage = document.getElementById('loginErrorMessage');
 
-        // Clear previous error message
         loginErrorMessage.classList.add('hidden');
         loginErrorMessage.innerText = '';
 
@@ -984,136 +1103,104 @@ if (loggedInEmailSpan && userEmail) {
             return;
         }
 
-        showLoading(); // Show loading animation during login
+        window.showLoading();
 
-        // Check for Admin login first
         if (desa === ADMIN_DESA && pass === ADMIN_PASSWORD) {
             currentUserDesa = ADMIN_DESA;
             localStorage.setItem('userDesa', ADMIN_DESA);
-            localStorage.setItem('isLoggedIn', 'true'); // Set isLoggedIn for offline access
-            isLoggedIn = true; // Update local variable
+            localStorage.setItem('isLoggedIn', 'true');
+            isLoggedIn = true;
             document.getElementById('loggedInDesa').innerText = currentUserDesa;
-            setAppUI(true); // Tampilkan main content area
-            hideLoading(); // Hide loading animation
-            loadAndRenderData();
-            populateFilters(); // Populate filters after login
-            showView('listView'); // Pastikan tampilan daftar muncul dan navigasi terlihat
-            return; // Admin login successful, exit function
+            window.setAppUI(true);
+            window.hideLoading();
+            window.loadAndRenderData();
+            window.populateFilters();
+            window.showView('listView');
+            return;
         }
 
-        // Check against hardcoded users for regular login (works offline)
         const matchedUser = users.find(user => user.desaKelurahan === desa && user.password === pass);
 
         if (matchedUser) {
             currentUserDesa = matchedUser.desaKelurahan;
             localStorage.setItem('userDesa', matchedUser.desaKelurahan);
-            localStorage.setItem('isLoggedIn', 'true'); // Set isLoggedIn for offline access
-            isLoggedIn = true; // Update local variable
+            localStorage.setItem('isLoggedIn', 'true');
+            isLoggedIn = true;
             document.getElementById('loggedInDesa').innerText = currentUserDesa;
-            setAppUI(true); // Tampilkan main content area
-            hideLoading(); // Hide loading animation
-            loadAndRenderData();
-            populateFilters(); // Populate filters after login
-            showView('listView'); // Pastikan tampilan daftar muncul dan navigasi terlihat
+            window.setAppUI(true);
+            window.hideLoading();
+            window.loadAndRenderData();
+            window.populateFilters();
+            window.showView('listView');
         } else {
-            // Display message for incorrect credentials directly in the login modal
             loginErrorMessage.innerText = 'Login gagal. Periksa desa dan password Anda.';
             loginErrorMessage.classList.remove('hidden');
-            hideLoading(); // Hide loading animation
-            // The login modal remains visible
+            window.hideLoading();
         }
     }
 
-    function handleLogout() {
+    window.handleLogout = function() {
         localStorage.removeItem('userDesa');
-        localStorage.removeItem('isLoggedIn'); // Clear isLoggedIn status on logout
-        localStorage.removeItem('cachedImunisasiData'); // Clear cached data on logout for privacy
-        localStorage.removeItem('offlineImunisasiData'); // Clear pending offline data on logout
+        localStorage.removeItem('isLoggedIn');
         currentUserDesa = null;
-        isLoggedIn = false; // Update local variable
+        isLoggedIn = false;
         document.getElementById('loggedInDesa').innerText = '';
-        setAppUI(false); // Sembunyikan main content area, tampilkan modal login
-        resetForm(); // Reset form state
-        // showView('listView') tidak perlu dipanggil di sini karena setAppUI(false) sudah menyembunyikan main-container
-        updateNetworkStatus(); // Update network status on logout
+        window.setAppUI(false);
+        window.resetForm();
+        window.updateNetworkStatus();
     }
 
-
-    // Variabel global untuk menyimpan semua data imunisasi yang dimuat
     let allImunisasiData = [];
-    // Global variable to store the uniqueId of the item being edited
     let currentEditingItemUniqueId = null;
-
-    // Global variables for scroll position and view mode
     let currentScrollPosition = 0;
-    let currentView = 'list'; // 'list', 'form', 'report'
-
-    // Global variable for font size zoom level (-2 to 2, 0 is default)
-    let currentZoomLevel = parseInt(localStorage.getItem('fontSizeZoomLevel') || '0'); // Default to 0
-
-    // Global date formatting options
+    let currentView = 'list';
+    let currentZoomLevel = parseInt(localStorage.getItem('fontSizeZoomLevel') || '0');
     const optionsLong = { day: '2-digit', month: 'long', year: 'numeric' };
     const optionsShort = { day: '2-digit', month: 'short', year: 'numeric' };
-
-    // Pagination variables
     let currentPage = 1;
     const itemsPerPage = 10;
-    let filteredData = []; // Data after applying name/NIK filter
+    let filteredData = [];
 
-    // --- Utility Functions ---
-
-    // Fungsi untuk membersihkan field CSV (menangani koma dan tanda kutip)
-    function sanitizeCsvField(field) {
+    window.sanitizeCsvField = function(field) {
         if (field === null || field === undefined) {
             return '';
         }
         let stringField = String(field);
-        // Escape double quotes with another double quote
         stringField = stringField.replace(/"/g, '""');
-        // If the field contains comma, double quote, or newline, enclose it in double quotes
         if (stringField.includes(',') || stringField.includes('"') || stringField.includes('\n')) {
             return `"${stringField}"`;
         }
         return stringField;
     }
 
-    // Fungsi untuk menampilkan animasi loading
-    function showLoading() {
+    window.showLoading = function() {
         document.getElementById('loadingOverlay').classList.remove('hidden');
     }
 
-    // Fungsi untuk menyembunyikan animasi loading
-    function hideLoading() {
+    window.hideLoading = function() {
         document.getElementById('loadingOverlay').classList.add('hidden');
     }
 
-    // Fungsi untuk mengatur ukuran font global
-    function adjustFontSize(change) {
-        if (change === 0) { // Reset to default (A)
+    window.adjustFontSize = function(change) {
+        if (change === 0) {
             currentZoomLevel = 0;
         } else {
             currentZoomLevel += change;
             if (currentZoomLevel < -2) currentZoomLevel = -2;
             if (currentZoomLevel > 2) currentZoomLevel = 2;
         }
-        
-        // Base size 16px, each step adds/subtracts 2px
         const baseSize = 16 + (currentZoomLevel * 2); 
         document.documentElement.style.setProperty('--base-font-size', `${baseSize}px`);
-        localStorage.setItem('fontSizeZoomLevel', currentZoomLevel);
-        updateFontSizeControls();
+        window.updateFontSizeControls();
     }
 
-    // Fungsi untuk memperbarui status tombol kontrol ukuran font
-    function updateFontSizeControls() {
+    window.updateFontSizeControls = function() {
         document.getElementById('zoomOutBtn').disabled = (currentZoomLevel === -2);
         document.getElementById('resetZoomBtn').disabled = (currentZoomLevel === 0);
         document.getElementById('zoomInBtn').disabled = (currentZoomLevel === 2);
     }
 
-    // Fungsi untuk menampilkan custom alert
-    // Menambahkan parameter itemUniqueId untuk tombol Edit
-    function showCustomAlert(message, whatsappLink = null, itemUniqueId = null) {
+    window.showCustomAlert = function(message, whatsappLink = null, itemUniqueId = null) {
         const customAlertDialog = document.getElementById('customAlertDialog');
         const customAlertMessage = document.getElementById('customAlertMessage');
         const alertButtonsContainer = customAlertDialog.querySelector('.flex.justify-end');
@@ -1121,7 +1208,6 @@ if (loggedInEmailSpan && userEmail) {
 
         customAlertMessage.innerText = message;
 
-        // Clear previous WhatsApp button if it exists
         let whatsappAlertButton = document.getElementById('whatsappAlertButton');
         if (whatsappAlertButton) {
             whatsappAlertButton.remove();
@@ -1134,68 +1220,58 @@ if (loggedInEmailSpan && userEmail) {
             whatsappAlertButton.innerText = 'Bagikan ke WhatsApp';
             whatsappAlertButton.onclick = () => {
                 window.open(whatsappLink, '_blank');
-                closeCustomAlert();
+                window.closeCustomAlert();
             };
             alertButtonsContainer.prepend(whatsappAlertButton);
         }
 
-        // Tampilkan tombol Edit jika itemUniqueId diberikan
         if (itemUniqueId) {
             editButton.classList.remove('hidden');
             editButton.onclick = () => {
-                editDataFromAlert(itemUniqueId);
+                window.editDataFromAlert(itemUniqueId);
             };
         } else {
-            editButton.classList.add('hidden'); // Sembunyikan jika tidak ada itemUniqueId
+            editButton.classList.add('hidden');
         }
 
         customAlertDialog.classList.remove('hidden');
     }
 
-    // Fungsi untuk menutup custom alert
-    function closeCustomAlert() {
+    window.closeCustomAlert = function() {
         document.getElementById('customAlertDialog').classList.add('hidden');
-        // Remove the dynamically added WhatsApp button
         let whatsappAlertButton = document.getElementById('whatsappAlertButton');
         if (whatsappAlertButton) {
             whatsappAlertButton.remove();
         }
-        // Sembunyikan tombol Edit juga saat menutup alert
         document.getElementById('editFromAlertBtn').classList.add('hidden');
     }
 
-    // Fungsi untuk menampilkan modal konfirmasi penghapusan
-    function showConfirmationModal(message, onConfirm) {
+    window.showConfirmationModal = function(message, onConfirm) {
         const confirmationModal = document.getElementById('confirmationModal');
         const confirmationMessage = document.getElementById('confirmationMessage');
         const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 
         confirmationMessage.innerText = message;
-        confirmDeleteBtn.onclick = onConfirm; // Set the action to perform on confirmation
+        confirmDeleteBtn.onclick = onConfirm;
 
         confirmationModal.classList.remove('hidden');
     }
 
-    // Fungsi untuk menutup modal konfirmasi penghapusan
-    function closeConfirmationModal() {
+    window.closeConfirmationModal = function() {
         document.getElementById('confirmationModal').classList.add('hidden');
     }
 
-    // Helper function to format date to YYYY-MM-DD (local time)
-    function formatDateToYYYYMMDD(dateString) {
+    window.formatDateToYYYYMMDD = function(dateString) {
         if (!dateString) return '';
         const d = new Date(dateString);
-        if (isNaN(d.getTime())) return ''; // Handle invalid dates
+        if (isNaN(d.getTime())) return '';
         const year = d.getFullYear();
         const month = (d.getMonth() + 1).toString().padStart(2, '0');
         const day = d.getDate().toString().padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
 
-    // --- Form Specific Functions ---
-
-    // Fungsi untuk menampilkan/menyembunyikan sub-bagian berdasarkan pilihan dropdown
-    function toggleSub(statusId, subId) {
+    window.toggleSub = function(statusId, subId) {
         const selected = document.getElementById(statusId).value;
         const sub = document.getElementById(subId);
         
@@ -1203,7 +1279,6 @@ if (loggedInEmailSpan && userEmail) {
             sub.classList.remove('hidden');
         } else {
             sub.classList.add('hidden');
-            // Reset checkboxes and clear date inputs when "Tidak" is selected
             sub.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
                 checkbox.checked = false;
             });
@@ -1211,39 +1286,36 @@ if (loggedInEmailSpan && userEmail) {
                 dateInput.value = "";
             });
         }
-        hitungStatusTT(); // Recalculate TT status after toggling
+        window.hitungStatusTT();
     }
 
-    // Fungsi untuk menambahkan entri kehamilan baru
-    function tambahKehamilan() {
+    window.tambahKehamilan = function() {
         const container = document.getElementById("hamilContainer");
         const count = container.getElementsByClassName("hamil-entry").length + 1;
         const div = document.createElement("div");
         div.className = "hamil-entry mb-1 pb-2 border-b border-dashed border-gray-200 last:border-b-0 last:mb-0 last:pb-0";
         div.innerHTML = `
             <label class="block mb-0 text-gray-700 font-medium">Hamil anak ke-${count} (tanggal):
-                <input type="date" name="hamil[]" onchange="hitungStatusTT()" class="block w-full p-3 mt-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                <input type="date" name="hamil[]" onchange="window.hitungStatusTT()" class="block w-full p-3 mt-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
             </label>
         `;
         container.appendChild(div);
     }
 
-    // Fungsi untuk menambahkan entri lainnya baru
-    function tambahLainnya() {
+    window.tambahLainnya = function() {
         const container = document.getElementById("lainnyaContainer");
         const div = document.createElement("div");
         div.className = "lainnya-entry mb-1 pb-2 border-b border-dashed border-gray-200 last:border-b-0 last:mb-0 last:pb-0";
         div.innerHTML = `
             <label class="block mb-0 text-gray-700 font-medium">Tanggal Imunisasi:</label>
-            <input type="date" name="lainnyaDate[]" onchange="hitungStatusTT()" class="block w-full p-3 mt-2 mb-1 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+            <input type="date" name="lainnyaDate[]" onchange="window.hitungStatusTT()" class="block w-full p-3 mt-2 mb-1 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
             <label class="block mb-0 text-gray-700 font-medium">Keterangan:</label>
             <textarea name="lainnyaKeterangan[]" rows="1" class="block w-full p-3 mt-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="Contoh: TT terjadwal, TT atas indikasi"></textarea>
         `;
         container.appendChild(div);
     }
 
-    // Fungsi untuk menghitung umur (tahun dan bulan)
-    function hitungUmur() {
+    window.hitungUmur = function() {
         const tanggalLahirInput = document.getElementById("tanggalLahir").value;
         const tanggalLayananInput = document.getElementById("tanggalLayanan").value;
         const umurOutput = document.getElementById("umur");
@@ -1258,7 +1330,7 @@ if (loggedInEmailSpan && userEmail) {
 
             if (days < 0) {
                 months--;
-                days += new Date(serviceDate.getFullYear(), serviceDate.getMonth(), 0).getDate(); // Days in previous month
+                days += new Date(serviceDate.getFullYear(), serviceDate.getMonth(), 0).getDate();
             }
 
             if (months < 0) {
@@ -1272,16 +1344,15 @@ if (loggedInEmailSpan && userEmail) {
         }
     }
 
-    // Calculate and fill date based on checkbox and offsets
-    function calculateAndFillDate(checkboxId, dateInputId, type, offset) {
+    window.calculateAndFillDate = function(checkboxId, dateInputId, type, offset) {
         const checkbox = document.getElementById(checkboxId);
         const dateInput = document.getElementById(dateInputId);
         const tanggalLahirInput = document.getElementById("tanggalLahir").value;
 
         if (!tanggalLahirInput) {
-            showCustomAlert("Harap isi Tanggal Lahir terlebih dahulu.");
-            checkbox.checked = false; // Uncheck if birth date is not set
-            dateInput.value = ""; // Ensure date input is cleared if birth date is missing
+            window.showCustomAlert("Harap isi Tanggal Lahir terlebih dahulu.");
+            checkbox.checked = false;
+            dateInput.value = "";
             return;
         }
 
@@ -1295,20 +1366,14 @@ if (loggedInEmailSpan && userEmail) {
                 calculatedDate.setFullYear(calculatedDate.getFullYear() + offset);
             }
 
-            dateInput.value = formatDateToYYYYMMDD(calculatedDate);
+            dateInput.value = window.formatDateToYYYYMMDD(calculatedDate);
         } else {
-            dateInput.value = ""; // Clear date if checkbox is unchecked
+            dateInput.value = "";
         }
-        hitungStatusTT(); // Recalculate TT status after date changes
+        window.hitungStatusTT();
     }
 
-    /**
-     * Helper function to set/clear error messages and styles for input fields.
-     * @param {string} inputId The ID of the input element.
-     * @param {string} errorId The ID of the span element for the error message.
-     * @param {string} message The error message to display. If empty, clears the error.
-     */
-    function setError(inputId, errorId, message) {
+    window.setError = function(inputId, errorId, message) {
         const inputElement = document.getElementById(inputId);
         const errorElement = document.getElementById(errorId);
         if (message) {
@@ -1320,61 +1385,56 @@ if (loggedInEmailSpan && userEmail) {
         }
     }
 
-    // Validation for NIK (Nomor Induk Kependudukan)
-    function validateNik() {
+    window.validateNik = function() {
         const nikInput = document.getElementById('nik');
         const nik = nikInput.value.trim();
         if (nik.length === 0) {
-            setError('nik', 'nikError', 'NIK tidak boleh kosong.');
+            window.setError('nik', 'nikError', 'NIK tidak boleh kosong.');
             return false;
         }
         if (!/^\d{16}$/.test(nik)) {
-            setError('nik', 'nikError', 'NIK harus 16 digit angka.');
+            window.setError('nik', 'nikError', 'NIK harus 16 digit angka.');
             return false;
         }
-        setError('nik', 'nikError', ''); // Clear error
+        window.setError('nik', 'nikError', '');
         return true;
     }
 
-    // Validation for No. HP (Nomor Handphone)
-    function validateNoHp() {
+    window.validateNoHp = function() {
         const noHpInput = document.getElementById('noHp');
         const noHp = noHpInput.value.trim();
         if (noHp.length === 0) {
-            setError('noHp', 'noHpError', 'Nomor HP tidak boleh kosong.');
+            window.setError('noHp', 'noHpError', 'Nomor HP tidak boleh kosong.');
             return false;
         }
-        // Basic validation: starts with 08, 10-13 digits, only numbers
         if (!/^08\d{8,11}$/.test(noHp)) {
-            setError('noHp', 'noHpError', 'Nomor HP tidak valid (contoh: 081234567890).');
+            window.setError('noHp', 'noHpError', 'Nomor HP tidak valid (contoh: 081234567890).');
             return false;
         }
-        setError('noHp', 'noHpError', ''); // Clear error
+        window.setError('noHp', 'noHpError', '');
         return true;
     }
 
-    // Validation for Tanggal Lahir (Date of Birth)
-    function validateTanggalLahir() {
+    window.validateTanggalLahir = function() {
         const tanggalLahirInput = document.getElementById('tanggalLahir');
         const tanggalLahir = tanggalLahirInput.value;
         if (!tanggalLahir) {
-            setError('tanggalLahir', 'tanggalLahirError', 'Tanggal Lahir tidak boleh kosong.');
+            window.setError('tanggalLahir', 'tanggalLahirError', 'Tanggal Lahir tidak boleh kosong.');
             return false;
         }
         const birthDate = new Date(tanggalLahir);
         const today = new Date();
-        today.setHours(0, 0, 0, 0); // Reset time for accurate comparison
+        today.setHours(0, 0, 0, 0);
 
         if (birthDate > today) {
-            setError('tanggalLahir', 'tanggalLahirError', 'Tanggal Lahir tidak boleh di masa depan.');
+            window.setError('tanggalLahir', 'tanggalLahirError', 'Tanggal Lahir tidak boleh di masa depan.');
             return false;
         }
-        setError('tanggalLahir', 'tanggalLahirError', ''); // Clear error
+        window.setError('tanggalLahir', 'tanggalLahirError', '');
         return true;
     }
 
-    // Fungsi utama untuk menghitung status imunisasi TT
-    function hitungStatusTT() {
+    window.hitungStatusTT = function() {
         const output = document.getElementById("statusOutput");
                 
         const nik = document.getElementById("nik").value.trim();
@@ -1383,9 +1443,9 @@ if (loggedInEmailSpan && userEmail) {
         const alamat = document.getElementById("alamat").value.trim();
         const noHp = document.getElementById("noHp").value.trim();
         const tanggalLahirInput = document.getElementById("tanggalLahir").value.trim();
-        const umur = document.getElementById("umur").value.trim(); // Get calculated umur (now years and months)
+        const umur = document.getElementById("umur").value.trim();
         const tanggalLayananStr = document.getElementById("tanggalLayanan").value.trim();
-        const catatan = document.getElementById("catatan").value.trim(); // Get the new catatan field
+        const catatan = document.getElementById("catatan").value.trim();
 
         let formattedTanggalLahir = "belum diisi";
         let formattedTanggalLayanan = "belum diisi";
@@ -1403,7 +1463,6 @@ if (loggedInEmailSpan && userEmail) {
         const bayiOn = document.getElementById("bayiStatus").value === "Ya";
         const sekolahOn = document.getElementById("sekolahStatus").value === "Ya";
 
-        // Collect dates and their sources from new date inputs
         const childhoodDoses = [];
         if (bayiOn) {
             if (document.getElementById("dpt1_date").value) childhoodDoses.push({ date: new Date(document.getElementById("dpt1_date").value), source: 'DPT1 (Bayi)' });
@@ -1417,7 +1476,6 @@ if (loggedInEmailSpan && userEmail) {
             if (document.getElementById("kelas5_date").value) childhoodDoses.push({ date: new Date(document.getElementById("kelas5_date").value), source: 'Kelas 5 (Sekolah)' });
         }
 
-        // Collect other doses with their sources
         const otherDoses = [];
         if (document.getElementById("catin1").value) otherDoses.push({ date: new Date(document.getElementById("catin1").value), source: 'Catin 1' });
         if (document.getElementById("catin2").value) otherDoses.push({ date: new Date(document.getElementById("catin2").value), source: 'Catin 2' });
@@ -1427,7 +1485,6 @@ if (loggedInEmailSpan && userEmail) {
             if (input.value) otherDoses.push({ date: new Date(input.value), source: `Hamil anak ke-${index + 1}` });
         });
 
-        // Collect "Lainnya" doses
         const lainnyaDates = document.querySelectorAll('input[name="lainnyaDate[]"]');
         const lainnyaKeterangan = document.querySelectorAll('textarea[name="lainnyaKeterangan[]"]');
         lainnyaDates.forEach((dateInput, index) => {
@@ -1437,13 +1494,11 @@ if (loggedInEmailSpan && userEmail) {
             }
         });
 
-        // Combine all doses and sort them chronologically
         const allDoses = [...childhoodDoses, ...otherDoses].sort((a, b) => a.date - b.date);
 
-        const validDoses = []; // Will store objects {date: Date, source: string} for valid T1-T5 doses
-        const tlVisits = []; // Will store objects {date: Date, source: string} for TL visits
+        const validDoses = [];
+        const tlVisits = [];
 
-        // First, process T1-T5 doses with interval rules
         for (let i = 0; i < allDoses.length; i++) {
             const currentDose = allDoses[i];
             let prevDoseDate = null;
@@ -1452,44 +1507,36 @@ if (loggedInEmailSpan && userEmail) {
                 prevDoseDate = validDoses[validDoses.length - 1].date;
             }
 
-            const statusSekarang = validDoses.length + 1; // This is the status *after* adding the current dose
+            const statusSekarang = validDoses.length + 1;
             let minimalInterval = 0;
 
-            if (statusSekarang === 2) { // TT1 to TT2
-                minimalInterval = 30; // 1 month
-            } else if (statusSekarang === 3) { // TT2 to TT3
-                minimalInterval = 180; // 6 months
-            } else if (statusSekarang === 4 || statusSekarang === 5) { // TT3 to TT4, TT4 to TT5
-                minimalInterval = 365; // 1 year
+            if (statusSekarang === 2) {
+                minimalInterval = 30;
+            } else if (statusSekarang === 3) {
+                minimalInterval = 180;
+            } else if (statusSekarang === 4 || statusSekarang === 5) {
+                minimalInterval = 365;
             }
 
             const jarakHari = prevDoseDate ? Math.floor((currentDose.date - prevDoseDate) / (1000 * 60 * 60 * 24)) : 0;
 
             if (currentDose.date.toString() !== 'Invalid Date') {
-                if (validDoses.length < 5) { // Still accumulating T1-T5
+                if (validDoses.length < 5) {
                     if (validDoses.length === 0 || jarakHari >= minimalInterval) {
                         validDoses.push(currentDose);
                     } else {
-                        // If interval is not met, this is an invalid dose for T1-T5 sequence,
-                        // but it might be a valid TL visit if status is already T5.
-                        // For now, we skip invalid T1-T5 doses.
                         console.warn(`[hitungStatusTT] Dosis tidak valid untuk T${statusSekarang} karena interval tidak terpenuhi:`, currentDose);
                     }
-                } else { // Status is already T5 (validDoses.length is 5)
-                    // This is a follow-up visit after T5, record as TL
+                } else {
                     let tlSource = currentDose.source;
                     if (tlSource.startsWith('Hamil anak ke-')) {
                         tlSource = `TL (${tlSource})`;
                     } else if (tlSource.startsWith('Lainnya')) {
                         tlSource = `TL (${tlSource})`;
                     } else if (tlSource.startsWith('Catin')) {
-                        // Catin doses typically lead to T1/T2. If T5 is already reached,
-                        // a Catin entry would be unusual, but we'll record it as TL.
                         tlSource = `TL (${tlSource})`;
                     } else {
-                        // DPT/Kelas doses typically lead to T1-T4. If T5 is already reached,
-                        // these entries would be unusual, but we'll record them as TL.
-                        tlSource = `TL (Kunjungan Ulang)`; // Generic TL for unexpected sources after T5
+                        tlSource = `TL (Kunjungan Ulang)`;
                     }
                     tlVisits.push({ date: currentDose.date, source: tlSource });
                 }
@@ -1500,28 +1547,26 @@ if (loggedInEmailSpan && userEmail) {
         console.log("[hitungStatusTT] TL Visits:", tlVisits);
 
         let statusT = validDoses.length;
-        let displayStatusTt = `T${statusT}`; // Default display status
-        let nextDoseScheduleForDisplay = ""; // For display in the form output
-        let nextDoseScheduleForStorage = ""; // For storage and WhatsApp message
+        let displayStatusTt = `T${statusT}`;
+        let nextDoseScheduleForDisplay = "";
+        let nextDoseScheduleForStorage = "";
 
-        // Check if the current tanggalLayanan corresponds to a TL visit
         const isCurrentVisitTL = tlVisits.some(visit => 
-            formatDateToYYYYMMDD(visit.date) === tanggalLayananStr // Compare formatted dates
+            window.formatDateToYYYYMMDD(visit.date) === tanggalLayananStr
         );
 
         if (statusT === 0) {
             const nextDoseDate = new Date();
             nextDoseScheduleForDisplay = nextDoseDate.toLocaleDateString("id-ID", optionsShort);
-            nextDoseScheduleForStorage = nextDoseDate.toISOString().split('T')[0]; // YYYY-MM-DD
+            nextDoseScheduleForStorage = nextDoseDate.toISOString().split('T')[0];
             output.innerHTML = `<span>Status: T0</span><span>Jadwal: ${nextDoseScheduleForDisplay}</span>`;
         } else {
-            // If T5 is achieved AND this is a TL visit (current tanggalLayanan is a TL entry)
             if (statusT === 5 && isCurrentVisitTL) {
-                displayStatusTt = "TL"; // Set status to TL
+                displayStatusTt = "TL";
                 nextDoseScheduleForDisplay = "Lengkap (TL)";
                 nextDoseScheduleForStorage = "Imunisasi TT lengkap (TL)";
-                output.innerHTML = `<span>Status: TL</span><span>Jadwal: ${nextDoseScheduleForDisplay}</span>`; // Display TL
-            } else { // Normal T1-T5 calculation or T5 without a new TL visit
+                output.innerHTML = `<span>Status: TL</span><span>Jadwal: ${nextDoseScheduleForDisplay}</span>`;
+            } else {
                 if (statusT < 5) {
                     const terakhir = validDoses[validDoses.length - 1].date;
                     const next = new Date(terakhir);
@@ -1531,43 +1576,41 @@ if (loggedInEmailSpan && userEmail) {
                     else next.setFullYear(next.getFullYear() + 1);
                     
                     nextDoseScheduleForDisplay = next.toLocaleDateString("id-ID", optionsShort);
-                    nextDoseScheduleForStorage = next.toISOString().split('T')[0]; // YYYY-MM-DD
+                    nextDoseScheduleForStorage = next.toISOString().split('T')[0];
                     output.innerHTML = `<span>Status: T${statusT}</span><span>Jadwal: ${nextDoseScheduleForDisplay}</span>`;
-                } else { // statusT === 5, but not a new TL visit
+                } else {
                     nextDoseScheduleForDisplay = "Lengkap (T5)";
-                    nextDoseScheduleForStorage = "Imunisasi TT lengkap (T5)"; // Store as string
+                    nextDoseScheduleForStorage = "Imunisasi TT lengkap (T5)";
                     output.innerHTML = `<span>Status: T5</span><span>Jadwal: ${nextDoseScheduleForDisplay}</span>`;
                 }
             }
         }
 
-        // Combine valid T1-T5 doses and TL visits for storage in ttDosesDetails
         const allDosesForStorage = [...validDoses, ...tlVisits].sort((a, b) => a.date - b.date);
 
-        // Siapkan data untuk disimpan ke Google Sheets
-        let dataToSave = {
-            nik: "'" + String(nik),
-            nama: nama,
-            desaKelurahan: desaKelurahan,
-            alamat: alamat,
-            noHp: "'" + String(noHp), // Pastikan noHp disimpan sebagai string
-            tanggalLahir: tanggalLahirInput, // Store as YYYY-MM-DD for consistency
-            umur: umur, // Now years and months
-            tanggalLayanan: tanggalLayananStr, // Store as YYYY-MM-DD for consistency
-            statusTt: displayStatusTt, // Use the determined displayStatusTt
-            jadwalDosisBerikutnya: nextDoseScheduleForStorage, // Store in YYYY-MM-DD or static string
-            ttDosesDetails: JSON.stringify(allDosesForStorage.map(d => ({
-                date: d.date.toISOString().split('T')[0], // Format YYYY-MM-DD for storage consistency
-                source: d.source
-            }))), // Stringify the array for sending to Google Sheets
-            catatan: catatan, // Include the new catatan field
-            timestamp: new Date().toISOString() // Tambahkan timestamp di sini
-        };
+       let dataToSave = {
+    nik: String(nik).trim(),
+    nama: nama,
+    desaKelurahan: desaKelurahan,
+    alamat: alamat,
+    noHp: String(noHp).trim(),
+    tanggalLahir: tanggalLahirInput,
+    umur: umur,
+    tanggalLayanan: tanggalLayananStr,
+    statusTt: displayStatusTt,
+    jadwalDosisBerikutnya: nextDoseScheduleForStorage,
+    ttDosesDetails: allDosesForStorage.map(d => ({
+        date: d.date.toISOString().split('T')[0],
+        source: d.source
+    })),
+    catatan: catatan,
+    timestamp: new Date().toISOString(),
+userEmail: localStorage.getItem('userEmail') || ''
+};
 
-        // Simpan data ini di objek global window agar bisa diakses oleh fungsi saveToSheets
+
         window.currentFormData = dataToSave;
 
-        // Siapkan pesan untuk WhatsApp dengan format baru dan emoji
         let messageParts = [];
         const puskesmasName = "*Puskesmas Lawawoi*";
 
@@ -1584,17 +1627,17 @@ if (loggedInEmailSpan && userEmail) {
             messageParts.push(`Halo Ibu *${nama || '-'}*! 👋`);
             messageParts.push(`NIK: *${nik || '-'}*`);
             messageParts.push(`Tanggal lahir: *${formattedTanggalLahir}*`);
-            messageParts.push(`Umur: *${umur || '-'}*`); // Include umur in WhatsApp message, now years and months
+            messageParts.push(`Umur: *${umur || '-'}*`);
             messageParts.push(`Desa/Kelurahan: *${desaKelurahan || '-'}*`);
             messageParts.push(`Alamat: *${alamat || '-'}*`);
             messageParts.push(`\nTerima kasih telah menggunakan layanan skrining imunisasi TT Puskesmas Lawawoi *tanggal ${formattedTanggalLayanan}*:`);
 
-            if (displayStatusTt === "TL") { // Check for TL status
+            if (displayStatusTt === "TL") {
                 messageParts.push(`- *Status imunisasi TT* Anda sudah *lengkap (TL)*. 🎉`);
             } else if (statusT < 5) {
                 messageParts.push(`- *Status TT* saat ini adalah *T${statusT}* ✨`);
-                messageParts.push(`- *Jadwal imunisasi berikutnya* adalah *${nextDoseScheduleForDisplay}* 🗓️`); // Use display format for WhatsApp
-            } else { // statusT === 5, but not a new TL visit
+                messageParts.push(`- *Jadwal imunisasi berikutnya* adalah *${nextDoseScheduleForDisplay}* 🗓️`);
+            } else {
                 messageParts.push(`- *Status imunisasi TT* Anda sudah *lengkap (T5)*. 🎉`);
             }
             
@@ -1618,282 +1661,194 @@ if (loggedInEmailSpan && userEmail) {
             }
             whatsappLink += formattedNoHp;
             whatsappLink += `?text=${encodeURIComponent(message)}`;
-            window.generatedWhatsappLink = whatsappLink; // Store for later use in alert
+            window.generatedWhatsappLink = whatsappLink;
         } else {
             window.generatedWhatsappLink = null;
         }
     }
 
-    // --- Data Persistence (Offline & Google Sheets) Functions ---
+    // 3. Buat Fungsi Menyimpan Data ke Firestore
+    async function simpanKeFirestore(data, uniqueId = null) {
+        try {
+            if (uniqueId) {
+                // Perbarui dokumen yang sudah ada
+                await updateDoc(doc(db, "imunisasi", uniqueId), data);
+                console.log("✅ Data berhasil diperbarui di Firestore:", uniqueId);
+            } else {
+                // Tambahkan dokumen baru
+                const docRef = await addDoc(collection(db, "imunisasi"), data);
+                console.log("✅ Data berhasil disimpan ke Firestore dengan ID:", docRef.id);
+                return docRef.id; // Mengembalikan ID dokumen baru
+            }
+        } catch (e) {
+            console.error("❌ Gagal menyimpan ke Firestore:", e);
+            throw e; // Lemparkan error agar bisa ditangkap oleh pemanggil
+        }
+    }
 
-    async function saveToSheets() {
-        // Run all validations before attempting to save
-        const isNikValid = validateNik();
-        const isNoHpValid = validateNoHp();
-        const isTanggalLahirValid = validateTanggalLahir();
+    // 4. Tambahkan Fungsi untuk Simpan Sementara ke localStorage
+    window.simpanKeLocalStorage = function(data) {
+        let offlineData = JSON.parse(localStorage.getItem("offlineData")) || [];
+        offlineData.push(data);
+        localStorage.setItem("offlineData", JSON.stringify(offlineData));
+        console.log("📦 Data disimpan sementara ke localStorage");
+    }
 
-        // Also check if nama and desaKelurahan are filled, as they are required
+    // Fungsi utama untuk menyimpan data (menggantikan saveToFirebase)
+    window.saveData = async function() {
+        const isNikValid = window.validateNik();
+        const isNoHpValid = window.validateNoHp();
+        const isTanggalLahirValid = window.validateTanggalLahir();
+
         const nama = document.getElementById('nama').value.trim();
         const desaKelurahan = document.getElementById('desaKelurahan').value.trim();
 
         let allRequiredFieldsValid = true;
         if (!nama) {
-            showCustomAlert("Nama tidak boleh kosong.");
+            window.showCustomAlert("Nama tidak boleh kosong.");
             allRequiredFieldsValid = false;
         }
         if (!desaKelurahan) {
-            showCustomAlert("Desa/Kelurahan tidak boleh kosong.");
+            window.showCustomAlert("Desa/Kelurahan tidak boleh kosong.");
             allRequiredFieldsValid = false;
         }
 
         if (!isNikValid || !isNoHpValid || !isTanggalLahirValid || !allRequiredFieldsValid) {
-            showCustomAlert("Mohon perbaiki kesalahan input pada formulir.");
-            return; // Stop the save process if any validation fails
+            window.showCustomAlert("Mohon perbaiki kesalahan input pada formulir.");
+            return;
         }
 
-        const data = window.currentFormData; // Ambil data yang sudah disiapkan
+               const data = window.currentFormData; // Ambil data yang sudah disiapkan
 
         const currentUserEmail = localStorage.getItem('userEmail');
         data.inisial_pengirim = currentUserEmail;
+        window.showLoading();
 
-        // Determine if it's an update or a new entry
-        if (currentEditingItemUniqueId) {
-            data.action = 'update';
-            data.uniqueId = currentEditingItemUniqueId; // Use the uniqueId for updating
-        } else {
-            data.action = 'add';
-            data.uniqueId = crypto.randomUUID(); // Generate a new uniqueId for new entries
-        }
-
-        showLoading(); // Show loading animation during data sending
-
-        // Cek koneksi internet
-        if (navigator.onLine) {
-            console.log(`[saveToSheets] Online: ${data.action === 'update' ? 'Memperbarui' : 'Mengirim'} data ke Google Sheets.`);
-            const success = await sendDataToGoogleSheets(data); // Pass data with action
-            if (success) {
-                showCustomAlert(`Data berhasil di${data.action === 'update' ? 'perbarui' : 'simpan'} ke Google Sheets!`, window.generatedWhatsappLink);
-                // After successful online save, ensure it's removed from offline queue if it was there
-                let storedOfflineData = JSON.parse(localStorage.getItem('offlineImunisasiData')) || [];
-                storedOfflineData = storedOfflineData.filter(item => String(item.uniqueId) !== String(data.uniqueId));
-                localStorage.setItem('offlineImunisasiData', JSON.stringify(storedOfflineData));
-                
-                resetForm();
-                showView('listView');
+        try {
+            if (navigator.onLine) {
+                await simpanKeFirestore(data, currentEditingItemUniqueId);
+                window.showCustomAlert("Data berhasil disimpan/diperbarui!", window.generatedWhatsappLink);
             } else {
-                console.error(`[saveToSheets] Gagal ${data.action === 'update' ? 'memperbarui' : 'menyimpan'} data ke Google Sheets. Menyimpan ke local storage.`);
-                saveDataLocally(data); // Save with action
-                showCustomAlert(`Gagal ${data.action === 'update' ? 'memperbarui' : 'menyimpan'} data ke Google Sheets. Data disimpan sementara dan akan dikirim saat online.`, window.generatedWhatsappLink);
-                resetForm();
-                showView('listView');
+                window.simpanKeLocalStorage({ ...data, uniqueId: currentEditingItemUniqueId }); // Sertakan uniqueId jika sedang edit
+                window.showCustomAlert("Anda sedang offline. Data disimpan sementara & akan disinkronkan nanti.");
             }
-        } else {
-            console.log("[saveToSheets] Offline: Menyimpan data ke local storage.");
-            saveDataLocally(data); // Save with action
-            showCustomAlert("Anda sedang offline. Data disimpan sementara dan akan dikirim saat online.", window.generatedWhatsappLink);
-            resetForm();
-            showView('listView');
-        }
-        hideLoading();
-        // After any save operation (online or offline), ensure the list is refreshed
-        loadAndRenderData();
-    }
-
-    // Fungsi untuk mengirim data ke Google Sheets
-    async function sendDataToGoogleSheets(data) {
-        try {
-            const payload = { ...data }; // Copy data
-            // If it's an update or delete, ensure 'action' is passed correctly
-            if (!payload.action) { // Only set if not already set (e.g., from deleteData)
-                payload.action = 'add'; // Default to 'add' if not specified
-            }
-
-            const response = await fetch(GOOGLE_SHEETS_WEB_APP_URL, {
-                method: 'POST',
-                mode: 'cors', // Use 'cors' mode to read response, ensure GAS handles CORS
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams(payload).toString(),
-            });
-
-            if (!response.ok) {
-                console.error('[sendDataToGoogleSheets] Network response was not ok:', response.statusText);
-                return false;
-            }
-            const responseText = await response.text(); // Get text response
-            console.log('[sendDataToGoogleSheets] Response from Google Sheets:', responseText);
-            return true; // Berhasil dikirim
+            window.resetForm();
+            window.showView('listView');
         } catch (error) {
-            console.error('[sendDataToGoogleSheets] Error saving data to Google Sheets:', error);
-            return false; // Gagal dikirim
-        }
-    }
-
-    // Fungsi untuk menghapus data dari Google Sheets
-    async function deleteDataFromGoogleSheets(uniqueId) {
-        showLoading();
-        try {
-            const response = await fetch(GOOGLE_SHEETS_WEB_APP_URL, {
-                method: 'POST',
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({ action: 'delete', uniqueId: uniqueId }).toString(),
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const responseText = await response.text();
-            console.log('[deleteDataFromGoogleSheets] Response from Google Sheets:', responseText);
-            return true;
-        } catch (error) {
-            console.error('[deleteDataFromGoogleSheets] Error deleting data from Google Sheets:', error);
-            return false;
+            console.error("Error dalam operasi simpan:", error);
+            window.showCustomAlert("Gagal menyimpan data. Mohon coba lagi.");
         } finally {
-            hideLoading();
+            window.hideLoading();
+            window.loadAndRenderData();
         }
     }
 
-    // Fungsi untuk menyimpan data ke local storage (digunakan untuk data pending sync)
-    function saveDataLocally(data) {
-        let storedData = JSON.parse(localStorage.getItem('offlineImunisasiData')) || [];
-        
-        // Find if an item with the same uniqueId already exists
-        const existingIndex = storedData.findIndex(item => String(item.uniqueId) === String(data.uniqueId));
+    // 5. Buat Fungsi Sinkronisasi Offline → Online
+    window.addEventListener("online", async () => {
+        console.log('Koneksi internet pulih! Mencoba sinkronisasi data offline...');
+        await window.syncOfflineDataToFirestore();
+        window.loadAndRenderData(); // Muat ulang daftar setelah online
+        window.updateNetworkStatus(); // Perbarui status jaringan menjadi online
+    });
 
-        if (existingIndex !== -1) {
-            // If exists, update it. Ensure 'action' is preserved if it's a delete action.
-            storedData[existingIndex] = { ...data, status: 'pending-sync' };
-        } else {
-            // If new, add it.
-            storedData.push({ ...data, status: 'pending-sync' });
-        }
-        
-        localStorage.setItem('offlineImunisasiData', JSON.stringify(storedData));
-        console.log("[saveDataLocally] Data berhasil disimpan di local storage (pending sync):", data);
-        // After saving locally, immediately update the displayed data
-        loadAndRenderData();
-    }
-
-    // Fungsi untuk mencoba mengirim data yang tersimpan di local storage saat online kembali
-    async function sendQueuedData() {
-        if (!navigator.onLine) {
-            console.log("[sendQueuedData] Offline. Cannot send queued data.");
+    window.syncOfflineDataToFirestore = async function() {
+        let offlineData = JSON.parse(localStorage.getItem("offlineData")) || [];
+        if (offlineData.length === 0) {
+            console.log("Tidak ada data offline untuk disinkronkan.");
             return;
         }
 
-        let storedData = JSON.parse(localStorage.getItem('offlineImunisasiData')) || [];
-        if (storedData.length === 0) {
-            console.log("[sendQueuedData] No queued data to send.");
-            return;
-        }
-
-        console.log(`[sendQueuedData] Koneksi pulih. Mencoba mengirim ${storedData.length} data yang tersimpan.`);
-        showLoading();
-
-        const successfullySentItems = [];
-        const failedToSendItems = [];
-
-        for (const data of storedData) {
-            let success = false;
-            if (data.action === 'delete') {
-                success = await deleteDataFromGoogleSheets(data.uniqueId);
-            } else {
-                // For add/update, ensure the 'action' field is included in the payload
-                success = await sendDataToGoogleSheets(data);
-            }
-
-            if (success) {
-                successfullySentItems.push(data);
-            } else {
-                failedToSendItems.push(data);
-            }
-        }
-
-        // Update local storage with only the items that failed to send
-        localStorage.setItem('offlineImunisasiData', JSON.stringify(failedToSendItems));
-        console.log(`[sendQueuedData] Berhasil mengirim ${successfullySentItems.length} data. Gagal: ${failedToSendItems.length}.`);
-
-        if (successfullySentItems.length > 0) {
-            showCustomAlert(`Berhasil mengirim ${successfullySentItems.length} data yang tertunda ke Google Sheets.`);
-        } else if (failedToSendItems.length > 0) {
-            showCustomAlert(`Gagal mengirim ${failedToSendItems.length} data yang tertunda. Coba lagi nanti.`);
-        } else {
-            showCustomAlert("Tidak ada data tertunda untuk disinkronkan.");
-        }
-
-        // Crucially, reload all data after attempted sync to reflect latest state
-        await loadAndRenderData();
-        hideLoading();
-    }
-
-    // Fungsi untuk mengambil data dari Google Sheets (untuk daftar dan laporan)
-    async function fetchDataFromGoogleSheets() {
-        if (!navigator.onLine) {
-            // If offline, return empty array for sheet data, rely on local data
-            console.log("[fetchDataFromGoogleSheets] Offline. Not fetching data from Google Sheets.");
-            return []; 
-        }
-        showLoading(); // Show loading animation before fetching
-        try {
-            const response = await fetch(GOOGLE_SHEETS_WEB_APP_URL + '?action=getAllImunisasiData'); // Changed to getAllImunisasiData
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
-            console.log('[fetchDataFromGoogleSheets] Data mentah dari Google Sheets:', data); // Log raw data
-            
-            const processedData = data.map(item => {
-                const uniqueId = String(item.uniqueId || crypto.randomUUID()); // Ensure uniqueId is always a string
-                return { ...item, uniqueId: uniqueId, status: 'synced' };
-            });
-            console.log('[fetchDataFromGoogleSheets] Data dari Google Sheets (setelah diproses):', processedData);
-
-            // Filter data for offline caching based on OFFLINE_CACHE_DURATION_MONTHS
-            const cacheCutoffDate = new Date();
-            cacheCutoffDate.setMonth(cacheCutoffDate.getMonth() - OFFLINE_CACHE_DURATION_MONTHS);
-            cacheCutoffDate.setHours(0, 0, 0, 0); // Reset time for accurate date comparison
-
-            const dataToCacheLocally = processedData.filter(item => {
-                // If OFFLINE_CACHE_DURATION_MONTHS is very large, this effectively caches all.
-                // Otherwise, it filters by date.
-                if (OFFLINE_CACHE_DURATION_MONTHS === 9999) return true; // Cache all if set to max
-                
-                if (item.tanggalLayanan) {
-                    const itemDate = new Date(item.tanggalLayanan);
-                    itemDate.setHours(0, 0, 0, 0); // Reset time for comparison
-                    return itemDate >= cacheCutoffDate;
+        window.showLoading();
+        console.log(`Mulai sinkronisasi ${offlineData.length} data offline.`);
+        
+        const remainingOfflineData = [];
+        for (const data of offlineData) {
+            try {
+                // Jika data memiliki uniqueId, itu berarti pembaruan. Jika tidak, itu adalah penambahan baru.
+                if (data.uniqueId) {
+                    await simpanKeFirestore(data, data.uniqueId);
+                    console.log(`Sinkronisasi update data dengan ID: ${data.uniqueId} berhasil.`);
+                } else {
+                    await simpanKeFirestore(data); // Tambah data baru
+                    console.log(`Sinkronisasi tambah data baru berhasil.`);
                 }
-                return false; // Don't cache items without a valid tanggalLayanan
+            } catch (e) {
+                console.error("Gagal sinkronisasi data offline:", data, e);
+                remainingOfflineData.push(data); // Simpan data yang gagal untuk coba lagi nanti
+            }
+        }
+        
+        if (remainingOfflineData.length > 0) {
+            localStorage.setItem("offlineData", JSON.stringify(remainingOfflineData));
+            window.showCustomAlert(`Sinkronisasi selesai. ${remainingOfflineData.length} data gagal disinkronkan.`);
+        } else {
+            localStorage.removeItem("offlineData");
+            window.showCustomAlert("Semua data offline telah disinkronkan ke Firestore! 🎉");
+        }
+        window.hideLoading();
+    }
+
+
+    // Fungsi untuk mengambil data dari Firestore (untuk daftar dan laporan)
+    window.fetchDataFromFirebase = async function() {
+        window.showLoading();
+        try {
+            const querySnapshot = await getDocs(collection(db, "imunisasi"));
+            const processedData = [];
+            querySnapshot.forEach((doc) => {
+                let data = doc.data();
+                // Firestore Timestamp objects need to be converted to ISO strings if you want to use them directly like dates
+                if (data.timestamp && data.timestamp.toDate) {
+                    data.timestamp = data.timestamp.toDate().toISOString();
+                }
+                // Ensure ttDosesDetails is an array, not a string (Firestore should handle this naturally, but good check)
+                if (typeof data.ttDosesDetails === 'string') {
+                    try {
+                        data.ttDosesDetails = JSON.parse(data.ttDosesDetails);
+                    } catch (e) {
+                        console.error("Failed to parse ttDosesDetails string from Firestore:", data.ttDosesDetails, e);
+                        data.ttDosesDetails = [];
+                    }
+                } else if (!Array.isArray(data.ttDosesDetails)) {
+                    data.ttDosesDetails = [];
+                }
+                processedData.push({ ...data, uniqueId: doc.id }); // Use doc.id as uniqueId
             });
-
-            localStorage.setItem('cachedImunisasiData', JSON.stringify(dataToCacheLocally));
-            console.log(`[fetchDataFromGoogleSheets] Data dari Google Sheets berhasil di-cache di localStorage (hanya ${OFFLINE_CACHE_DURATION_MONTHS} bulan terakhir):`, dataToCacheLocally);
-
-            return processedData; // Return all data for online display/report
+            console.log('[fetchDataFromFirebase] Data dari Firestore:', processedData);
+            return processedData;
         } catch (error) {
-            console.error('[fetchDataFromGoogleSheets] Error fetching data from Google Sheets:', error);
-            showCustomAlert("Gagal memuat data dari Google Sheets. Pastikan Anda online dan URL Web App sudah benar.");
+            console.error('[fetchDataFromFirebase] Error fetching data from Firestore:', error);
+            window.showCustomAlert("Gagal memuat data dari Firestore.");
             return [];
         } finally {
-            hideLoading();
+            window.hideLoading();
         }
     }
 
-    // --- List View Functions ---
+    // Fungsi untuk menghapus data dari Firestore
+    window.deleteDataFromFirebase = async function(uniqueId) {
+        window.showLoading();
+        try {
+            await deleteDoc(doc(db, "imunisasi", uniqueId));
+            window.showCustomAlert("Data berhasil dihapus dari Firestore!");
+            window.closeFullDetailModal();
+            window.loadAndRenderData();
+        } catch (error) {
+            console.error('[deleteDataFromFirebase] Error deleting data from Firestore:', error);
+            window.showCustomAlert("Gagal menghapus data dari Firestore.");
+        } finally {
+            window.hideLoading();
+        }
+    }
 
-    // Fungsi untuk merender daftar data
-    async function renderDataList(dataToDisplay) {
+    window.renderDataList = async function(dataToDisplay) {
         const dataListDiv = document.getElementById('dataList');
         const loadingMessageElement = document.getElementById('loadingMessage');
         if (loadingMessageElement) {
             loadingMessageElement.classList.add('hidden');
         }
         
-        dataListDiv.innerHTML = ''; // Clear previous list
+        dataListDiv.innerHTML = '';
 
         if (dataToDisplay.length === 0) {
             dataListDiv.innerHTML = '<p class="text-center text-gray-500">Tidak ada data imunisasi untuk kriteria ini.</p>';
@@ -1901,44 +1856,37 @@ if (loggedInEmailSpan && userEmail) {
         }
 
         const today = new Date();
-        today.setHours(0, 0, 0, 0); // Reset time for accurate date comparison
+        today.setHours(0, 0, 0, 0);
 
         dataToDisplay.forEach((item, index) => {
-            const isSynced = item.status === 'synced';
-            
-            // Determine border color based on sync status
-            const borderColorClass = isSynced ? 'border-blue-500' : 'border-yellow-500';
+            const borderColorClass = 'border-blue-500';
 
-            // Determine text color for Tanggal Layanan (Status TT)
-            let statusTextColorClass = 'text-blue-800'; // Default to dark blue
-            const currentTtStatus = item.statusTt || 'T0'; // Get the string statusTt
+            let statusTextColorClass = 'text-blue-800';
+            const currentTtStatus = item.statusTt || 'T0';
 
             if (currentTtStatus === 'T5') {
-                statusTextColorClass = 'text-green-700'; // Complete
-            } else if (currentTtStatus === 'TL') { // New condition for TL
-                statusTextColorClass = 'text-purple-700'; // Purple for TL
-            } else { // For T0-T4, check for overdue
+                statusTextColorClass = 'text-green-700';
+            } else if (currentTtStatus === 'TL') {
+                statusTextColorClass = 'text-purple-700';
+            } else {
                 const currentTtStatusNum = parseInt(currentTtStatus.replace('T', ''));
-                // Only apply yellow if the current status (e.g., T3) is the one we're checking for
-                // and it's not T5 or TL.
                 if (currentTtStatusNum >= 0 && currentTtStatusNum < 5) {
                     let nextScheduleDate = null;
                     if (item.jadwalDosisBerikutnya && item.jadwalDosisBerikutnya !== "Imunisasi TT lengkap (T5)" && item.jadwalDosisBerikutnya !== "Imunisasi TT lengkap (TL)") {
                         try {
                             nextScheduleDate = new Date(item.jadwalDosisBerikutnya);
-                            nextScheduleDate.setHours(0, 0, 0, 0); // Reset time for comparison
+                            nextScheduleDate.setHours(0, 0, 0, 0);
                         } catch (e) {
                             console.error("Invalid nextScheduleDate:", item.jadwalDosisBerikutnya, e);
                             nextScheduleDate = null;
                         }
                     }
                     if (nextScheduleDate && nextScheduleDate <= today) {
-                        statusTextColorClass = 'text-yellow-700'; // Kuning jika jatuh tempo/terlambat
+                        statusTextColorClass = 'text-yellow-700';
                     }
                 }
             }
 
-            // Format tanggal lahir untuk ditampilkan
             let displayTanggalLahir = item.tanggalLahir || '-';
             if (item.tanggalLahir && typeof item.tanggalLahir === 'string') {
                 const dateObj = new Date(item.tanggalLahir);
@@ -1947,18 +1895,14 @@ if (loggedInEmailSpan && userEmail) {
                 }
             }
 
-            // START: Modifikasi untuk menampilkan umur hanya tahun
             let displayUmurYearsOnly = '';
             if (item.umur) {
-                const match = item.umur.match(/^(\d+)/); // Ambil angka pertama (tahun)
+                const match = item.umur.match(/^(\d+)/);
                 if (match) {
                     displayUmurYearsOnly = match[1];
                 }
             }
-            // Menggabungkan Nama dan Umur (tahun saja)
             const displayNameAndAge = `${item.nama || '-'} (${displayUmurYearsOnly || '-'})`;
-            // END: Modifikasi untuk menampilkan umur hanya tahun
-
 
             let displayTanggalLayanan = item.tanggalLayanan || '-';
             if (item.tanggalLayanan && typeof item.tanggalLayanan === 'string') {
@@ -1968,9 +1912,8 @@ if (loggedInEmailSpan && userEmail) {
                 }
             }
 
-            // Re-generate TT boxes for display in the list view
             let ttBoxesHtml = '';
-            let allParsedDoses = []; // This will hold all parsed doses from ttDosesDetails
+            let allParsedDoses = [];
             if (Array.isArray(item.ttDosesDetails)) {
                 allParsedDoses = item.ttDosesDetails;
             } else if (typeof item.ttDosesDetails === 'string') {
@@ -1986,14 +1929,10 @@ if (loggedInEmailSpan && userEmail) {
                 }
             }
 
-            // Filter out TL visits to get only T1-T5 relevant doses for coloring
-            // And ensure they are sorted by date to correctly assign T1, T2, etc.
             const t1ToT5DosesForColoring = allParsedDoses
                 .filter(d => !d.source.startsWith('TL'))
                 .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-            // Create a Set of given dose *numbers* (1 for T1, 2 for T2, etc.)
-            // This set will contain {1, 2, 3, 4, 5} if all are given.
             const givenDoseNumbers = new Set();
             for (let i = 0; i < t1ToT5DosesForColoring.length && i < 5; i++) {
                 givenDoseNumbers.add(i + 1);
@@ -2002,75 +1941,59 @@ if (loggedInEmailSpan && userEmail) {
             const hasTL = allParsedDoses.some(d => d.source.startsWith('TL'));
 
             for (let i = 1; i <= 5; i++) {
-                let boxClass = 'bg-gray-200'; // Default: grey
+                let boxClass = 'bg-gray-200';
                 let boxText = `T${i}`;
 
-                const doseGiven = givenDoseNumbers.has(i); // Check if this specific dose (T1-T5) was given
+                const doseGiven = givenDoseNumbers.has(i);
 
                 if (doseGiven) {
-                    boxClass = 'bg-green-500 text-white'; // Hijau untuk dosis yang sudah diberikan
+                    boxClass = 'bg-green-500 text-white';
                 } else {
-                    // This dose (T_i) has NOT been given.
-                    // Check if T_i is the *next expected* dose based on item.statusTt
                     const currentTtStatusNum = parseInt(item.statusTt ? item.statusTt.replace('T', '') : '0');
-                    // The next expected dose is currentTtStatusNum + 1.
-                    // So, if i matches (currentTtStatusNum + 1), it's the one we're looking for.
-                    if (i === (currentTtStatusNum + 1)) { // This is the next dose that *should* be given
+                    if (i === (currentTtStatusNum + 1)) {
                         let nextScheduleDate = null;
                         if (item.jadwalDosisBerikutnya && item.jadwalDosisBerikutnya !== "Imunisasi TT lengkap (T5)" && item.jadwalDosisBerikutnya !== "Imunisasi TT lengkap (TL)") {
                             try {
                                 nextScheduleDate = new Date(item.jadwalDosisBerikutnya);
-                                nextScheduleDate.setHours(0, 0, 0, 0); // Reset time for comparison
+                                nextScheduleDate.setHours(0, 0, 0, 0);
                             } catch (e) {
                                 console.error("Invalid nextScheduleDate:", item.jadwalDosisBerikutnya, e);
                                 nextScheduleDate = null;
                             }
                         }
-                        // If there's a valid next schedule date and it's today or in the past
                         if (nextScheduleDate && nextScheduleDate <= today) {
-                            boxClass = 'bg-yellow-500 text-white'; // Kuning jika jatuh tempo/terlambat
+                            boxClass = 'bg-yellow-500 text-white';
                         }
                     }
                 }
                 ttBoxesHtml += `<div class="tt-box ${boxClass}">${boxText}</div>`;
             }
-            // Add TL box if applicable
             if (hasTL) {
                 ttBoxesHtml += `<div class="tt-box bg-purple-500 text-white">TL</div>`;
             }
 
-
             let statusBadgeHtml = '';
-            if (!isSynced) { // Hanya tampilkan badge jika belum tersinkronisasi
-                const statusBadgeClass = 'pending';
-                statusBadgeHtml = `<span class="badge-sync ${statusBadgeClass}">Menunggu Sinkronisasi</span>`;
-            }
 
-            // --- START: Added Phone Number and Action Icons ---
             let phoneNumberAndIconsHtml = '';
             let formattedNoHpForLink = '';
             let isNoHpValidForAction = false;
 
             if (item.noHp && item.noHp.trim() !== '') {
-                // Remove the leading single quote if present
-                const cleanedNoHp = item.noHp.startsWith("'") ? item.noHp.substring(1).trim() : item.noHp.trim();
+                const cleanedNoHp = String(item.noHp).startsWith("'") ? String(item.noHp).substring(1).trim() : String(item.noHp).trim();
 
-                // Basic validation for action links: starts with 08 and has 10-13 digits
                 if (/^08\d{8,11}$/.test(cleanedNoHp)) {
                     isNoHpValidForAction = true;
-                    formattedNoHpForLink = cleanedNoHp.replace(/\D/g, ''); // Remove non-digits
+                    formattedNoHpForLink = cleanedNoHp.replace(/\D/g, '');
                     if (formattedNoHpForLink.startsWith('0')) {
                         formattedNoHpForLink = '62' + formattedNoHpForLink.substring(1);
                     } else if (!formattedNoHpForLink.startsWith('62')) {
-                        formattedNoHpForLink = '62' + formattedNoHp;
+                        formattedNoHpForLink = '62' + formattedNoHpForLink;
                     }
                 }
             }
             
-            // Generate onClick message for invalid/empty number
             const invalidNumberMessage = "Nomor HP tidak valid atau kosong. Silakan masuk ke menu edit untuk mengisi atau memperbaiki nomor HP.";
-            // Pass item.uniqueId to showCustomAlert
-            const onClickActionInvalid = `onclick="event.stopPropagation(); showCustomAlert('${invalidNumberMessage}', null, '${item.uniqueId}');"`;
+            const onClickActionInvalid = `onclick="event.stopPropagation(); window.showCustomAlert('${invalidNumberMessage}', null, '${item.uniqueId}');"`;
 
             const callLink = isNoHpValidForAction ? `tel:${formattedNoHpForLink}` : '#';
             const whatsappLink = isNoHpValidForAction ? `https://wa.me/${formattedNoHpForLink}` : '#';
@@ -2084,19 +2007,17 @@ if (loggedInEmailSpan && userEmail) {
                     <a href="${whatsappLink}" ${isNoHpValidForAction ? 'target="_blank"' : onClickActionInvalid} class="text-green-500 hover:text-green-700 ${disabledClass}" onclick="event.stopPropagation();">
                         <i class="fab fa-whatsapp"></i>
                     </a>
-                    <span>${item.noHp ? (item.noHp.startsWith("'") ? item.noHp.substring(1) : item.noHp) : '-'}</span>
+                    <span>${item.noHp ? (String(item.noHp).startsWith("'") ? String(item.noHp).substring(1) : String(item.noHp)) : '-'}</span>
                 </div>
             `;
-            // --- END: Added Phone Number and Action Icons ---
 
-            // Log the uniqueId when rendering the card
             console.log(`[renderDataList] Rendering card for ${item.nama} with uniqueId: ${item.uniqueId}`);
 
             const cardHtml = `
-                <div class="data-card-item ${borderColorClass}" onclick="openFullDetailModal('${item.uniqueId}')">
+                <div class="data-card-item ${borderColorClass}" onclick="window.openFullDetailModal('${item.uniqueId}')">
                     <div class="flex justify-between items-start w-full">
                         <div class="flex-grow pr-2">
-                            <p class="font-semibold text-base text-gray-800">${displayNameAndAge}</p> <!-- Menggunakan displayNameAndAge -->
+                            <p class="font-semibold text-base text-gray-800">${displayNameAndAge}</p>
                             <p class="text-sm text-gray-600">${item.nik || '-'}</p>
                             <p class="text-sm text-gray-600">${item.alamat || '-'}</p>
                         </div>
@@ -2104,8 +2025,8 @@ if (loggedInEmailSpan && userEmail) {
                             <div class="tt-boxes-container justify-end">
                                 ${ttBoxesHtml}
                             </div>
-                            <p class="text-sm font-bold ${statusTextColorClass} mt-1">${displayTanggalLayanan} (${item.statusTt || '-'})</p> <!-- Changed text-xs to text-sm -->
-                            ${phoneNumberAndIconsHtml} <!-- Insert the phone number and icons here -->
+                            <p class="text-sm font-bold ${statusTextColorClass} mt-1">${displayTanggalLayanan} (${item.statusTt || '-'})</p>
+                            ${phoneNumberAndIconsHtml}
                             <div class="sync-badge-container text-right">
                                 ${statusBadgeHtml}
                             </div>
@@ -2116,18 +2037,16 @@ if (loggedInEmailSpan && userEmail) {
             dataListDiv.innerHTML += cardHtml;
         });
 
-        updatePaginationControls();
+        window.updatePaginationControls();
     }
 
-    // Fungsi untuk memuat dan merender semua data (offline + online)
-    async function loadAndRenderData() {
+    window.loadAndRenderData = async function() {
         console.log("[loadAndRenderData] Called.");
-        console.log("[loadAndRenderData] navigator.onLine:", navigator.onLine);
         console.log("[loadAndRenderData] currentUserDesa:", currentUserDesa);
 
         if (!currentUserDesa) {
             document.getElementById('loadingMessage').innerText = 'Silahkan login untuk melihat data.';
-            document.getElementById('dataList').innerHTML = ''; // Clear existing data
+            document.getElementById('dataList').innerHTML = '';
             console.log("[loadAndRenderData] Not logged in, clearing data list.");
             return;
         }
@@ -2135,51 +2054,11 @@ if (loggedInEmailSpan && userEmail) {
         const loadingMessageElement = document.getElementById('loadingMessage');
         if (loadingMessageElement) {
             loadingMessageElement.classList.remove('hidden');
-            loadingMessageElement.innerText = 'Memuat data...'; // Ensure message is visible
+            loadingMessageElement.innerText = 'Memuat data...';
         }
         
-        let localPendingData = JSON.parse(localStorage.getItem('offlineImunisasiData')) || []; // Data waiting to be synced
-        let cachedSyncedData = JSON.parse(localStorage.getItem('cachedImunisasiData')) || []; // Data successfully synced from Sheets
-
-        console.log("[loadAndRenderData] localPendingData (from localStorage):", localPendingData);
-        console.log("[loadAndRenderData] cachedSyncedData (from localStorage):", cachedSyncedData);
-
-        let sheetData = [];
-        if (navigator.onLine) {
-            sheetData = await fetchDataFromGoogleSheets(); // This fetches ALL data and caches recent
-            
-            // Merge sheetData and localPendingData, localPendingData takes precedence
-            const combinedDataMap = new Map();
-            sheetData.forEach(item => combinedDataMap.set(String(item.uniqueId), { ...item, status: 'synced' })); // Mark sheet data as synced
-            localPendingData.forEach(item => {
-                // If it's a delete action, remove it from the map if it exists
-                if (item.action === 'delete') {
-                    combinedDataMap.delete(String(item.uniqueId));
-                } else {
-                    // For add/update, overwrite/add with the local pending version
-                    combinedDataMap.set(String(item.uniqueId), { ...item, status: 'pending-sync' });
-                }
-            });
-
-            allImunisasiData = Array.from(combinedDataMap.values());
-            console.log("[loadAndRenderData] Online mode: Combined data from Sheets and local pending data. Total items:", allImunisasiData.length);
-        } else {
-            // Offline: Combine local pending data with previously cached synced data
-            const combinedDataMap = new Map(); 
-            cachedSyncedData.forEach(item => combinedDataMap.set(String(item.uniqueId), { ...item, status: 'synced' })); // Cached data is considered synced
-            localPendingData.forEach(item => {
-                if (item.action === 'delete') {
-                    combinedDataMap.delete(String(item.uniqueId));
-                } else {
-                    combinedDataMap.set(String(item.uniqueId), { ...item, status: 'pending-sync' });
-                }
-            });
-
-            allImunisasiData = Array.from(combinedDataMap.values());
-            console.log("[loadAndRenderData] Offline mode: Combined data from cached synced data and local pending data. Total items:", allImunisasiData.length);
-        }
-
-        // Sort allImunisasiData by timestamp (newest first)
+        allImunisasiData = await window.fetchDataFromFirebase();
+        
         allImunisasiData.sort((a, b) => {
             const timestampA = new Date(a.timestamp || 0).getTime();
             const timestampB = new Date(b.timestamp || 0).getTime();
@@ -2189,30 +2068,26 @@ if (loggedInEmailSpan && userEmail) {
         console.log("[loadAndRenderData] Final allImunisasiData (before filter/paginate):", allImunisasiData);
         console.log("[loadAndRenderData] Total items in allImunisasiData (before filter/paginate):", allImunisasiData.length);
 
-        filterAndPaginate(); // Call filterAndPaginate without parameters, it will handle default 1-year filter
-        hideLoading(); // Hide loading after data is loaded and rendered
+        window.filterAndPaginate();
+        window.hideLoading();
         console.log("[loadAndRenderData] filterAndPaginate called.");
     }
 
-    // Fungsi untuk memfilter dan melakukan paginasi data
-    function filterAndPaginate() {
+    window.filterAndPaginate = function() {
         console.log("[filterAndPaginate] Called.");
         const filterText = document.getElementById('nameNikFilter').value.toLowerCase();
-        let dataToConsider = [...allImunisasiData]; // Start with all data
+        let dataToConsider = [...allImunisasiData];
 
-        // 1. Apply user's desa filter (always)
         if (currentUserDesa !== "AdminPuskesmas") {
             dataToConsider = dataToConsider.filter(item => String(item.desaKelurahan) === String(currentUserDesa));
         }
 
-        // 2. Apply name/NIK filter (always, if present)
         if (filterText) {
             dataToConsider = dataToConsider.filter(item => 
                 (String(item.nama || '').toLowerCase().includes(filterText)) || 
                 (String(item.nik || '').toLowerCase().includes(filterText))
             );
         } else {
-            // 3. Apply default 1-year date filter ONLY IF filterText is empty (i.e., default list view)
             const oneYearAgo = new Date();
             oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
             oneYearAgo.setHours(0, 0, 0, 0);
@@ -2227,21 +2102,20 @@ if (loggedInEmailSpan && userEmail) {
             });
         }
 
-        // Sort by timestamp (newest first)
         dataToConsider.sort((a, b) => {
             const timestampA = new Date(a.timestamp || 0).getTime();
             const timestampB = new Date(b.timestamp || 0).getTime();
             return timestampB - timestampA;
         });
 
-        filteredData = dataToConsider; // Update global filteredData
+        filteredData = dataToConsider;
 
         const totalPages = Math.ceil(filteredData.length / itemsPerPage);
         if (currentPage > totalPages && totalPages > 0) {
-            currentPage = totalPages; // Adjust current page if it's now out of bounds
+            currentPage = totalPages;
             console.log("[filterAndPaginate] Adjusted currentPage to:", currentPage);
         } else if (totalPages === 0) {
-            currentPage = 1; // If no data, reset to page 1
+            currentPage = 1;
             console.log("[filterAndPaginate] No data, currentPage reset to 1.");
         }
 
@@ -2250,29 +2124,25 @@ if (loggedInEmailSpan && userEmail) {
         const dataToDisplay = filteredData.slice(startIndex, endIndex);
         console.log("[filterAndPaginate] Data to display (paginated) length:", dataToDisplay.length);
 
-        renderDataList(dataToDisplay); // Render the paginated data
+        window.renderDataList(dataToDisplay);
     }
 
-    // Fungsi untuk memperbarui kontrol paginasi
-    function updatePaginationControls() {
+    window.updatePaginationControls = function() {
         const totalPages = Math.ceil(filteredData.length / itemsPerPage);
         document.getElementById('pageInfo').innerText = `Halaman ${currentPage} dari ${totalPages || 1}`;
         document.getElementById('prevPageBtn').disabled = (currentPage === 1);
         document.getElementById('nextPageBtn').disabled = (currentPage === totalPages || totalPages === 0);
     }
 
-    // Fungsi untuk pindah halaman
-    function goToPage(pageNumber) {
+    window.goToPage = function(pageNumber) {
         currentPage = pageNumber;
-        filterAndPaginate();
+        window.filterAndPaginate();
     }
 
-
-    // Fungsi untuk mereset formulir
-    function resetForm() {
+    window.resetForm = function() {
         document.getElementById("nik").value = "";
         document.getElementById("nama").value = "";
-        document.getElementById("desaKelurahan").value = currentUserDesa === "AdminPuskesmas" ? "" : (currentUserDesa || ""); // Set default to logged-in desa, or empty for admin
+        document.getElementById("desaKelurahan").value = currentUserDesa === "AdminPuskesmas" ? "" : (currentUserDesa || "");
         document.getElementById("alamat").value = "";
         document.getElementById("noHp").value = "";
         document.getElementById("tanggalLahir").value = "";
@@ -2281,10 +2151,10 @@ if (loggedInEmailSpan && userEmail) {
         document.getElementById("catatan").value = "";
 
         document.getElementById("bayiStatus").value = "Tidak";
-        toggleSub('bayiStatus', 'subBayi');
+        window.toggleSub('bayiStatus', 'subBayi');
 
         document.getElementById("sekolahStatus").value = "Tidak";
-        toggleSub('sekolahStatus', 'subSekolah');
+        window.toggleSub('sekolahStatus', 'subSekolah');
 
         document.getElementById("catin1").value = "";
         document.getElementById("catin2").value = "";
@@ -2295,7 +2165,6 @@ if (loggedInEmailSpan && userEmail) {
         }
         hamilContainer.querySelector('input[name="hamil[]"]').value = "";
 
-        // Reset "Lainnya" section
         const lainnyaContainer = document.getElementById("lainnyaContainer");
         while (lainnyaContainer.children.length > 1) {
             lainnyaContainer.removeChild(lainnyaContainer.lastChild);
@@ -2303,37 +2172,29 @@ if (loggedInEmailSpan && userEmail) {
         lainnyaContainer.querySelector('input[name="lainnyaDate[]"]').value = "";
         lainnyaContainer.querySelector('textarea[name="lainnyaKeterangan[]"]').value = "";
 
-
-        currentEditingItemUniqueId = null; // Reset uniqueId for new entry
-        hitungUmur(); // Recalculate umur after reset
-        hitungStatusTT(); // Recalculate TT status after reset
+        currentEditingItemUniqueId = null;
+        window.hitungUmur();
+        window.hitungStatusTT();
         
-        // Clear all validation errors
-        setError('nik', 'nikError', '');
-        setError('noHp', 'noHpError', '');
-        setError('tanggalLahir', 'tanggalLahirError', '');
+        window.setError('nik', 'nikError', '');
+        window.setError('noHp', 'noHpError', '');
+        window.setError('tanggalLahir', 'tanggalLahirError', '');
     }
 
-    // Fungsi untuk mengatur status edit formulir (mengaktifkan/menonaktifkan bagian tertentu)
-    function setFormEditState(isEditing) {
-        // Main identity and contact fields should always be editable when the form is shown
-        // regardless of whether it's a new entry or an edit.
+    window.setFormEditState = function(isEditing) {
         const mainEditableFields = [
             'nama', 'tanggalLahir', 'nik', 'desaKelurahan', 'alamat', 'noHp', 'tanggalLayanan', 'catatan'
         ];
         mainEditableFields.forEach(id => {
             const element = document.getElementById(id);
             if (element) {
-                element.disabled = false; // Always enable these for user input
+                element.disabled = false;
                 element.classList.remove('bg-gray-200', 'cursor-not-allowed');
             }
         });
-        // Umur is always readonly
         document.getElementById('umur').disabled = true;
         document.getElementById('umur').classList.add('bg-gray-200', 'cursor-not-allowed');
 
-
-        // Handle historical dose sections (Bayi, Sekolah) - these should be disabled in edit mode
         const historicalSectionElements = [
             document.getElementById('bayiStatus'),
             document.getElementById('sekolahStatus'),
@@ -2343,134 +2204,90 @@ if (loggedInEmailSpan && userEmail) {
 
         historicalSectionElements.forEach(element => {
             if (element) {
-                element.disabled = isEditing; // Disable only if in editing mode
+                element.disabled = isEditing;
                 element.classList.toggle('bg-gray-200', isEditing);
                 element.classList.toggle('cursor-not-allowed', isEditing);
             }
         });
 
-        // Handle Catin, Hamil, and Lainnya sections - these should be editable in edit mode
         const editableDoseSections = [
             document.getElementById('catin1'),
             document.getElementById('catin2'),
             ...document.querySelectorAll('input[name="hamil[]"]'),
-            ...document.querySelectorAll('input[name="lainnyaDate[]"]'), // Added Lainnya
-            ...document.querySelectorAll('textarea[name="lainnyaKeterangan[]"]') // Added Lainnya
+            ...document.querySelectorAll('input[name="lainnyaDate[]"]'),
+            ...document.querySelectorAll('textarea[name="lainnyaKeterangan[]"]')
         ];
 
         editableDoseSections.forEach(element => {
             if (element) {
-                element.disabled = false; // Always enable these for editing
+                element.disabled = false;
                 element.classList.remove('bg-gray-200', 'cursor-not-allowed');
             }
         });
 
-        // Enable "Tambah Kehamilan" and "Tambah Lainnya" buttons
-        const tambahKehamilanBtn = document.querySelector('button[onclick="tambahKehamilan()"]');
+        const tambahKehamilanBtn = document.querySelector('button[onclick="window.tambahKehamilan()"]');
         if (tambahKehamilanBtn) {
-            tambahKehamilanBtn.disabled = false; // Always enable this for editing
+            tambahKehamilanBtn.disabled = false;
             tambahKehamilanBtn.classList.remove('opacity-70', 'cursor-not-allowed');
         }
-        const tambahLainnyaBtn = document.querySelector('button[onclick="tambahLainnya()"]'); // Added Lainnya button
+        const tambahLainnyaBtn = document.querySelector('button[onclick="window.tambahLainnya()"]');
         if (tambahLainnyaBtn) {
-            tambahLainnyaBtn.disabled = false; // Always enable this for really
+            tambahLainnyaBtn.disabled = false;
             tambahLainnyaBtn.classList.remove('opacity-70', 'cursor-not-allowed');
         }
 
-        // Dim historical sections visually, but not Catin/Hamil/Lainnya
         document.getElementById('sectionBayi').classList.toggle('opacity-70', isEditing);
         document.getElementById('sectionSekolah').classList.toggle('opacity-70', isEditing);
         
-        // Ensure Catin, Hamil, and Lainnya sections are NOT dimmed
         const catinSection = document.getElementById('sectionCatin');
         if (catinSection) catinSection.classList.remove('opacity-70');
         const hamilSection = document.getElementById('sectionHamil');
         if (hamilSection) hamilSection.classList.remove('opacity-70');
-        const lainnyaSection = document.getElementById('sectionLainnya'); // Added Lainnya section
+        const lainnyaSection = document.getElementById('sectionLainnya');
         if (lainnyaSection) lainnyaSection.classList.remove('opacity-70');
     }
 
-    // New function to load data into the form for editing
-    // Now accepts uniqueId instead of itemIndex
-    function editSelectedData(uniqueId) {
-        // Ensure uniqueId is a string for comparison
+    window.editSelectedData = function(uniqueId) {
         const item = allImunisasiData.find(d => String(d.uniqueId) === String(uniqueId));
         if (!item) {
-            showCustomAlert("Data untuk diedit tidak ditemukan.");
+            window.showCustomAlert("Data untuk diedit tidak ditemukan.");
             return;
         }
         currentEditingItemUniqueId = item.uniqueId;
-        showView('formView', item); // Pass the item data to showView
+        window.showView('formView', item);
     }
 
-    // New function to edit data directly from the alert modal
-    function editDataFromAlert(uniqueId) {
-        closeCustomAlert(); // Close the alert modal first
-        // Ensure uniqueId is a string for comparison
+    window.editDataFromAlert = function(uniqueId) {
+        window.closeCustomAlert();
         const itemToEdit = allImunisasiData.find(item => String(item.uniqueId) === String(uniqueId));
         
         if (itemToEdit) {
             currentEditingItemUniqueId = itemToEdit.uniqueId;
-            showView('formView', itemToEdit); // Load the item into the form
+            window.showView('formView', itemToEdit);
         } else {
-            showCustomAlert("Data yang ingin diedit tidak ditemukan.");
+            window.showCustomAlert("Data yang ingin diedit tidak ditemukan.");
         }
     }
 
-    // Fungsi untuk menghapus data
-    async function deleteData(uniqueId) {
-        closeConfirmationModal(); // Close the confirmation modal
-
-        const deletePayload = { uniqueId: uniqueId, action: 'delete', timestamp: new Date().toISOString() };
-
-        showLoading();
-
-        if (navigator.onLine) {
-            const success = await deleteDataFromGoogleSheets(uniqueId);
-            if (success) {
-                // Remove the item from allImunisasiData and local storage (offline queue)
-                allImunisasiData = allImunisasiData.filter(item => String(item.uniqueId) !== String(uniqueId));
-                let storedData = JSON.parse(localStorage.getItem('offlineImunisasiData')) || [];
-                storedData = storedData.filter(item => String(item.uniqueId) !== String(uniqueId)); // Remove if it was pending
-                localStorage.setItem('offlineImunisasiData', JSON.stringify(storedData));
-                
-                showCustomAlert("Data berhasil dihapus!");
-                closeFullDetailModal();
-                loadAndRenderData();
-            } else {
-                showCustomAlert("Gagal menghapus data online. Permintaan hapus disimpan secara lokal.");
-                saveDataLocally(deletePayload); // Save delete action locally
-                closeFullDetailModal();
-                loadAndRenderData();
-            }
-        } else {
-            showCustomAlert("Anda sedang offline. Permintaan hapus disimpan secara lokal dan akan disinkronkan nanti.");
-            saveDataLocally(deletePayload); // Save delete action locally
-            closeFullDetailModal();
-            loadAndRenderData();
-        }
-        hideLoading();
+    window.deleteData = async function(uniqueId) {
+        window.closeConfirmationModal();
+        await window.deleteDataFromFirebase(uniqueId);
     }
 
-    // --- Full Detail Modal Functions ---
-
-    // Fungsi baru untuk membuka modal detail LENGKAP
-    // Now accepts uniqueId instead of itemIndex
-    function openFullDetailModal(uniqueId) {
+    window.openFullDetailModal = function(uniqueId) {
         const item = allImunisasiData.find(d => String(d.uniqueId) === String(uniqueId));
         if (!item) {
-            showCustomAlert("Data detail tidak ditemukan.");
+            window.showCustomAlert("Data detail tidak ditemukan.");
             return;
         }
 
         const mainContainer = document.querySelector('.main-container');
         currentScrollPosition = mainContainer ? mainContainer.scrollTop : 0;
-        currentView = 'list'; // Ensure currentView is 'list' when opening modal from list
+        currentView = 'list';
 
-        // Sembunyikan topNavBar dan mainNavBar
-        document.getElementById('topNavBar').classList.add('hidden'); // Sembunyikan topNavBar saat modal detail terbuka
+        document.getElementById('topNavBar').classList.add('hidden');
         document.getElementById('mainNavBar').classList.add('hidden');
-        document.querySelector('.main-container').classList.add('hidden'); // Sembunyikan main-container juga
+        document.querySelector('.main-container').classList.add('hidden');
 
         document.getElementById('detailNama').innerText = item.nama || '-';
         
@@ -2488,8 +2305,9 @@ if (loggedInEmailSpan && userEmail) {
         document.getElementById('detailDesaKelurahan').innerText = item.desaKelurahan || '-';
         document.getElementById('detailAlamat').innerText = item.alamat || '-';
         
-        // Display the phone number without the leading single quote
-        document.getElementById('detailNoHp').innerText = item.noHp ? (item.noHp.startsWith("'") ? item.noHp.substring(1) : item.noHp) : '-';
+        const displayNoHp = item.noHp ? String(item.noHp) : '';
+document.getElementById('detailNoHp').innerText = displayNoHp;
+
         
         let displayTanggalLayanan = item.tanggalLayanan || '-';
         if (item.tanggalLayanan && typeof item.tanggalLayanan === 'string') {
@@ -2503,7 +2321,6 @@ if (loggedInEmailSpan && userEmail) {
         document.getElementById('detailStatusTt').innerText = item.statusTt || '-';
         
         let displayJadwalDosisBerikutnya = item.jadwalDosisBerikutnya || '-';
-        // If status is TL, display "Imunisasi TT lengkap (TL)"
         if (item.statusTt === "TL") {
             displayJadwalDosisBerikutnya = "Imunisasi TT lengkap (TL)";
         } else if (item.jadwalDosisBerikutnya && item.jadwalDosisBerikutnya !== "Imunisasi TT lengkap (T5)") {
@@ -2539,111 +2356,102 @@ if (dosesArray.length > 0) {
             }
         }
 
-        // Format label TT1, TT2, ..., TL
         let label;
         if ((dose.source || '').toUpperCase().includes('TL')) {
             label = 'TL';
+        } else if ((dose.source || '').includes('Catin')) {
+            label = dose.source;
+        } else if ((dose.source || '').includes('Hamil')) {
+            label = dose.source;
+        } else if ((dose.source || '').includes('DPT')) {
+            label = dose.source.replace(' (Bayi)', '');
+        } else if ((dose.source || '').includes('Kelas')) {
+            label = dose.source.replace(' (Sekolah)', '');
         } else {
             label = `TT${index + 1}`;
         }
-
+        
         li.innerText = `${label} : ${doseDate} - ${dose.source || 'Tidak Diketahui'}`;
         dosesList.appendChild(li);
     });
 }
 
-
         document.getElementById('detailCatatan').innerText = item.catatan || 'Tidak ada catatan.';
 
-        // Pass uniqueId to editSelectedData
+document.getElementById('detailUserEmail').innerText = item.userEmail || '-';
+
         document.getElementById('editFromFullModalBtn').onclick = () => {
-            closeFullDetailModal();
-            editSelectedData(item.uniqueId);
+            window.closeFullDetailModal();
+            window.editSelectedData(item.uniqueId);
         };
 
-        // Set up delete button
         document.getElementById('deleteFromFullModalBtn').onclick = () => {
-            showConfirmationModal("Apakah Anda yakin ingin menghapus data ini secara permanen?", () => deleteData(item.uniqueId));
+            window.showConfirmationModal("Apakah Anda yakin ingin menghapus data ini secara permanen?", () => window.deleteData(item.uniqueId));
         };
 
         document.getElementById('fullDetailModal').classList.remove('hidden');
     }
 
-    // Fungsi untuk menutup modal detail LENGKAP
-    function closeFullDetailModal() {
+    window.closeFullDetailModal = function() {
         document.getElementById('fullDetailModal').classList.add('hidden');
-        // Tampilkan kembali topNavBar dan mainNavBar
-        document.getElementById('topNavBar').classList.remove('hidden'); // Tampilkan kembali topNavBar
+        document.getElementById('topNavBar').classList.remove('hidden');
         document.getElementById('mainNavBar').classList.remove('hidden');
-        document.querySelector('.main-container').classList.remove('hidden'); // Tampilkan main-container
+        document.querySelector('.main-container').classList.remove('hidden');
     }
 
-    // --- Report View Functions ---
-
-    // Populate month and year filters
-    function populateFilters() {
+    window.populateFilters = function() {
         const monthFilter = document.getElementById('monthFilter');
         const yearFilter = document.getElementById('yearFilter');
-        const downloadMonthFilter = document.getElementById('downloadMonthFilter'); // New: for download modal
-        const downloadYearFilter = document.getElementById('downloadYearFilter');   // New: for download modal
+        const downloadMonthFilter = document.getElementById('downloadMonthFilter');
+        const downloadYearFilter = document.getElementById('downloadYearFilter');
         const monthFilterContainer = document.getElementById('monthFilterContainer');
         const yearFilterContainer = document.getElementById('yearFilterContainer'); 
 
-        // Clear existing options for all filters
         monthFilter.innerHTML = '';
         yearFilter.innerHTML = '';
-        downloadMonthFilter.innerHTML = ''; // Clear for download modal
-        downloadYearFilter.innerHTML = '';   // Clear for download modal
+        downloadMonthFilter.innerHTML = '';
+        downloadYearFilter.innerHTML = '';
 
-        // Populate years for the last 5 years up to current year + 1
         const currentYear = new Date().getFullYear();
         for (let year = currentYear - 5; year <= currentYear + 1; year++) {
             const option = document.createElement('option');
             option.value = year;
             option.textContent = year;
             yearFilter.appendChild(option);
-            downloadYearFilter.appendChild(option.cloneNode(true)); // Clone for download modal
+            downloadYearFilter.appendChild(option.cloneNode(true));
         }
-        // Set current year as default for both
         yearFilter.value = currentYear;
         downloadYearFilter.value = currentYear;
 
-        // --- START OF MOVED CODE ---
         monthFilter.innerHTML = '<option value="">Semua Bulan</option>';
-        downloadMonthFilter.innerHTML = '<option value="">Semua Bulan</option>'; // For download modal
+        downloadMonthFilter.innerHTML = '<option value="">Semua Bulan</option>';
         const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
         months.forEach((month, index) => {
             const option = document.createElement('option');
             option.value = (index + 1).toString().padStart(2, '0');
             option.textContent = month;
             monthFilter.appendChild(option);
-            downloadMonthFilter.appendChild(option.cloneNode(true)); // Clone for download modal
+            downloadMonthFilter.appendChild(option.cloneNode(true));
         });
         const currentMonth = (new Date().getMonth() + 1).toString().padStart(2, '0');
         monthFilter.value = currentMonth;
         downloadMonthFilter.value = currentMonth;
-        // --- END OF MOVED CODE ---
 
         if (currentUserDesa === "AdminPuskesmas") {
-            // Admin: Show month filter and year filter for both report and download
             monthFilterContainer.classList.remove('hidden');
             yearFilterContainer.classList.remove('hidden'); 
-
         } else {
-            // User: Hide month filter, show only year filter for both report and download
             monthFilterContainer.classList.add('hidden');
             yearFilterContainer.classList.remove('hidden');
-            // For download modal, ensure month filter is ALWAYS visible, regardless of user type
             downloadMonthFilter.classList.remove('hidden'); 
-            downloadMonthFilter.previousElementSibling.classList.remove('hidden'); // Show its label too
+            downloadMonthFilter.previousElementSibling.classList.remove('hidden');
         }
     }
 
-    // Generate report table
-    async function generateReport() {
+    window.generateReport = async function() {
         console.log("[generateReport] Function called.");
         if (!currentUserDesa) {
-            showCustomAlert('Silahkan login untuk melihat laporan.');
+            window.showCustomAlert('Silahkan login untuk melihat laporan.');
             return;
         }
 
@@ -2653,23 +2461,18 @@ if (dosesArray.length > 0) {
         
         const reportTableBody = document.getElementById('reportTableBody');
         const reportTableHeader = document.getElementById('reportTableHeader');
-        reportTableBody.innerHTML = '<tr><td colspan="17" class="text-center py-4 text-gray-500">Membuat laporan...</td></tr>'; // Increased colspan
+        reportTableBody.innerHTML = '<tr><td colspan="17" class="text-center py-4 text-gray-500">Membuat laporan...</td></tr>';
 
-        showLoading(); // Show loading animation before generating report
+        window.showLoading();
 
         try {
-            // Ensure allImunisasiData is loaded before generating report
             if (allImunisasiData.length === 0) {
                 console.log("[generateReport] allImunisasiData is empty, calling loadAndRenderData().");
-                await loadAndRenderData(); 
+                await window.loadAndRenderData(); 
             } else {
                 console.log("[generateReport] allImunisasiData already loaded.");
             }
 
-            // --- START: MODIFIED FILTERING LOGIC ---
-            // Initial data for report:
-            // Admin: all data
-            // User: only data for their desa
             let dataForReport = [];
             if (currentUserDesa === "AdminPuskesmas") {
                 dataForReport = [...allImunisasiData];
@@ -2680,11 +2483,9 @@ if (dosesArray.length > 0) {
                 );
                 console.log(`[generateReport] User mode (${currentUserDesa}): Data filtered by desa for initial processing. Count: ${dataForReport.length}`);
             }
-            // --- END: MODIFIED FILTERING LOGIC ---
 
-            reportTableBody.innerHTML = ''; // Clear existing rows
+            reportTableBody.innerHTML = '';
 
-            // Determine the text for the first column header based on user type
             let firstColumnHeaderText = '';
             if (currentUserDesa === "AdminPuskesmas") {
                 firstColumnHeaderText = 'Desa';
@@ -2692,10 +2493,8 @@ if (dosesArray.length > 0) {
                 firstColumnHeaderText = 'Bulan';
             }
 
-            // Define common headers for TT1-TT5, Bumil/NonBumil, and total columns
-            const ttHeaders = ['TT1', 'TT2', 'TT3', 'TT4', 'TT5', 'TL']; // Added 'TL'
+            const ttHeaders = ['TT1', 'TT2', 'TT3', 'TT4', 'TT5', 'TL'];
             
-            // New header structure
             let headerHtml = `
                 <tr>
                     <th rowspan="2" scope="col" class="px-2 py-1 text-center text-xs font-medium text-gray-500 uppercase tracking-wider sticky-col">${firstColumnHeaderText}</th>
@@ -2726,14 +2525,13 @@ if (dosesArray.length > 0) {
                 TT3_Bumil: 0, TT3_NonBumil: 0,
                 TT4_Bumil: 0, TT4_NonBumil: 0,
                 TT5_Bumil: 0, TT5_NonBumil: 0,
-                TL_Bumil: 0, TL_NonBumil: 0, // Added TL totals
+                TL_Bumil: 0, TL_NonBumil: 0,
                 sumIbuHamil: 0, 
                 sumHashHamil: 0, 
                 sumTotal: 0 
             };
 
             if (currentUserDesa === "AdminPuskesmas") {
-                // Admin Report: Group by Desa. Filter by selectedMonth and selectedYear for doses.
                 const aggregatedDataByDesa = {};
 
                 dataForReport.forEach(item => {
@@ -2745,7 +2543,7 @@ if (dosesArray.length > 0) {
                             TT3_Bumil: 0, TT3_NonBumil: 0,
                             TT4_Bumil: 0, TT4_NonBumil: 0,
                             TT5_Bumil: 0, TT5_NonBumil: 0,
-                            TL_Bumil: 0, TL_NonBumil: 0, // Added TL counts
+                            TL_Bumil: 0, TL_NonBumil: 0,
                             totalDosesBumil: 0, 
                             totalDosesNonBumil: 0 
                         };
@@ -2764,7 +2562,6 @@ if (dosesArray.length > 0) {
                     console.log(`[generateReport-Admin] Processing item ${item.uniqueId}, Desa: ${desa}, Doses:`, itemDoses);
 
                     itemDoses.forEach((doseEntry, doseIndex) => {
-                        // Ensure dose.date exists and is a valid date string
                         if (!doseEntry.date || typeof doseEntry.date !== 'string') {
                             console.warn(`[generateReport-Admin] Skipping dose due to invalid date:`, doseEntry);
                             return;
@@ -2777,7 +2574,6 @@ if (dosesArray.length > 0) {
                         const doseMonth = (doseDate.getMonth() + 1).toString().padStart(2, '0');
                         const doseYear = doseDate.getFullYear().toString();
 
-                        // Apply month and year filter to the dose date itself
                         const isDoseInSelectedPeriod = 
                             (!selectedMonth || doseMonth === selectedMonth) && 
                             (!selectedYear || doseYear === selectedYear);
@@ -2785,30 +2581,28 @@ if (dosesArray.length > 0) {
                         if (isDoseInSelectedPeriod) {
                             const isBumilDose = doseEntry.source.includes('Hamil');
                             const isCatinLainnyaDose = doseEntry.source.includes('Catin') || doseEntry.source.includes('Lainnya');
-                            // const isBayiSekolahDose = doseEntry.source.includes('DPT') || doseEntry.source.includes('Kelas'); // Not needed for report counting
 
-                            if (doseEntry.source.startsWith('TL')) { // Handle TL status
-                                if (isBumilDose) { // Check if TL is for a pregnant woman
+                            if (doseEntry.source.startsWith('TL')) {
+                                if (isBumilDose) {
                                     aggregatedDataByDesa[desa].TL_Bumil++;
-                                    aggregatedDataByDesa[desa].totalDosesBumil++; // Include TL in total Bumil count
-                                } else if (isCatinLainnyaDose) { // Only Catin/Lainnya for #BUMIL TL
+                                    aggregatedDataByDesa[desa].totalDosesBumil++;
+                                } else if (isCatinLainnyaDose) {
                                     aggregatedDataByDesa[desa].TL_NonBumil++;
                                     aggregatedDataByDesa[desa].totalDosesNonBumil++;
                                 }
                                 console.log(`[generateReport-Admin] Counted TL for ${desa}. Current Bumil: ${aggregatedDataByDesa[desa].TL_Bumil}, NonBumil: ${aggregatedDataByDesa[desa].TL_NonBumil}`);
-                            } else { // Handle TT1-T5 doses
-                                const ttNumber = doseIndex + 1; // Assuming itemDoses is already the sequence of TT1, TT2, etc.
+                            } else {
+                                const ttNumber = doseIndex + 1; 
                                 if (ttNumber >= 1 && ttNumber <= 5) {
                                     if (isBumilDose) {
                                         aggregatedDataByDesa[desa][`TT${ttNumber}_Bumil`]++;
                                         aggregatedDataByDesa[desa].totalDosesBumil++; 
                                         console.log(`[generateReport-Admin] Counted TT${ttNumber}_Bumil for ${desa}. Current:`, aggregatedDataByDesa[desa][`TT${ttNumber}_Bumil`]);
-                                    } else if (isCatinLainnyaDose) { // Only Catin/Lainnya for #BUMIL TT1-TT5
+                                    } else if (isCatinLainnyaDose) {
                                         aggregatedDataByDesa[desa][`TT${ttNumber}_NonBumil`]++;
                                         aggregatedDataByDesa[desa].totalDosesNonBumil++; 
                                         console.log(`[generateReport-Admin] Counted TT${ttNumber}_NonBumil for ${desa}. Current:`, aggregatedDataByDesa[desa][`TT${ttNumber}_NonBumil`]);
                                     }
-                                    // Bayi/Sekolah doses are explicitly NOT counted in the report here for #BUMIL.
                                 }
                             }
                         }
@@ -2823,10 +2617,10 @@ if (dosesArray.length > 0) {
                         const data = aggregatedDataByDesa[desa];
                         const row = reportTableBody.insertRow();
                         let rowHtml = `<td class="px-2 py-1 whitespace-nowrap sticky-col">${desa}</td>`;
-                        ttHeaders.forEach(tt => { // Loop through TT1-TT5, TL
+                        ttHeaders.forEach(tt => {
                             rowHtml += `<td class="px-2 py-1 whitespace-nowrap">${data[`${tt}_Bumil`]}</td>`;
                         });
-                        ttHeaders.forEach(tt => { // Loop through TT1-TT5, TL
+                        ttHeaders.forEach(tt => {
                             rowHtml += `<td class="px-2 py-1 whitespace-nowrap">${data[`${tt}_NonBumil`]}</td>`;
                         });
                         rowHtml += `<td class="px-2 py-1 whitespace-nowrap">${data.totalDosesBumil}</td>`; 
@@ -2834,13 +2628,12 @@ if (dosesArray.length > 0) {
                         rowHtml += `<td class="px-2 py-1 whitespace-nowrap">${data.totalDosesBumil + data.totalDosesNonBumil}</td>`;
                         row.innerHTML = rowHtml;
 
-                        // Add to grand totals (summing up the displayed values)
                         grandTotals.TT1_Bumil += data.TT1_Bumil; grandTotals.TT1_NonBumil += data.TT1_NonBumil;
                         grandTotals.TT2_Bumil += data.TT2_Bumil; grandTotals.TT2_NonBumil += data.TT2_NonBumil;
                         grandTotals.TT3_Bumil += data.TT3_Bumil; grandTotals.TT3_NonBumil += data.TT3_NonBumil;
                         grandTotals.TT4_Bumil += data.TT4_Bumil; grandTotals.TT4_NonBumil += data.TT4_NonBumil;
                         grandTotals.TT5_Bumil += data.TT5_Bumil; grandTotals.TT5_NonBumil += data.TT5_NonBumil;
-                        grandTotals.TL_Bumil += data.TL_Bumil; grandTotals.TL_NonBumil += data.TL_NonBumil; // Sum TL
+                        grandTotals.TL_Bumil += data.TL_Bumil; grandTotals.TL_NonBumil += data.TL_NonBumil;
                         grandTotals.sumIbuHamil += data.totalDosesBumil; 
                         grandTotals.sumHashHamil += data.totalDosesNonBumil; 
                         grandTotals.sumTotal += (data.totalDosesBumil + data.totalDosesNonBumil); 
@@ -2865,11 +2658,9 @@ if (dosesArray.length > 0) {
                 }
 
             } else {
-                // User Report: Group by Month. Filter by selectedYear and currentUserDesa for doses.
                 const aggregatedDataByMonth = {};
                 const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
-                // Initialize aggregatedDataByMonth for all 12 months
                 months.forEach((monthName, index) => {
                     const monthKey = (index + 1).toString().padStart(2, '0');
                     aggregatedDataByMonth[monthKey] = {
@@ -2879,7 +2670,7 @@ if (dosesArray.length > 0) {
                         TT3_Bumil: 0, TT3_NonBumil: 0,
                         TT4_Bumil: 0, TT4_NonBumil: 0,
                         TT5_Bumil: 0, TT5_NonBumil: 0,
-                        TL_Bumil: 0, TL_NonBumil: 0, // Added TL counts
+                        TL_Bumil: 0, TL_NonBumil: 0,
                         totalDosesBumil: 0, 
                         totalDosesNonBumil: 0 
                     };
@@ -2887,12 +2678,6 @@ if (dosesArray.length > 0) {
                 console.log("[generateReport-User] Initialized aggregatedDataByMonth:", aggregatedDataByMonth);
 
                 dataForReport.forEach(item => {
-                    // This filter is already applied in the initial dataForReport selection for users
-                    // if (String(item.desaKelurahan) !== String(currentUserDesa)) {
-                    //     console.log(`[generateReport-User] Skipping item ${item.uniqueId} because desa (${item.desaKelurahan}) does not match current user's desa (${currentUserDesa}).`);
-                    //     return;
-                    // }
-
                     let itemDoses = [];
                     if (Array.isArray(item.ttDosesDetails)) {
                         itemDoses = item.ttDosesDetails;
@@ -2906,7 +2691,6 @@ if (dosesArray.length > 0) {
                     console.log(`[generateReport-User] Processing item ${item.uniqueId}, Doses:`, itemDoses);
 
                     itemDoses.forEach((doseEntry, doseIndex) => {
-                        // Ensure dose.date exists and is a valid date string
                         if (!doseEntry.date || typeof doseEntry.date !== 'string') {
                             console.warn(`[generateReport-User] Skipping dose due to invalid date:`, doseEntry);
                             return;
@@ -2919,34 +2703,32 @@ if (dosesArray.length > 0) {
                         const doseYear = doseDate.getFullYear().toString();
                         const doseMonth = (doseDate.getMonth() + 1).toString().padStart(2, '0');
 
-                        // Apply year filter to the dose date itself
                         if (doseYear === selectedYear) {
-                            if (aggregatedDataByMonth[doseMonth]) { // Ensure month exists in aggregation object
+                            if (aggregatedDataByMonth[doseMonth]) {
                                 const isBumilDose = doseEntry.source.includes('Hamil');
                                 const isCatinLainnyaDose = doseEntry.source.includes('Catin') || doseEntry.source.includes('Lainnya');
 
-                                if (doseEntry.source.startsWith('TL')) { // Handle TL status
+                                if (doseEntry.source.startsWith('TL')) {
                                     if (isBumilDose) {
                                         aggregatedDataByMonth[doseMonth].TL_Bumil++;
                                         aggregatedDataByMonth[doseMonth].totalDosesBumil++;
-                                    } else if (isCatinLainnyaDose) { // Only Catin/Lainnya for #BUMIL TL
+                                    } else if (isCatinLainnyaDose) {
                                         aggregatedDataByMonth[doseMonth].TL_NonBumil++;
                                         aggregatedDataByMonth[doseMonth].totalDosesNonBumil++;
                                     }
                                     console.log(`[generateReport-User] Counted TL for month ${doseMonth}. Current Bumil: ${aggregatedDataByMonth[doseMonth].TL_Bumil}, NonBumil: ${aggregatedDataByMonth[doseMonth].TL_NonBumil}`);
-                                } else { // Handle TT1-TT5
+                                } else {
                                     const ttNumber = doseIndex + 1;
                                     if (ttNumber >= 1 && ttNumber <= 5) {
                                         if (isBumilDose) {
                                             aggregatedDataByMonth[doseMonth][`TT${ttNumber}_Bumil`]++;
                                             aggregatedDataByMonth[doseMonth].totalDosesBumil++; 
                                             console.log(`[generateReport-User] Counted TT${ttNumber}_Bumil for month ${doseMonth}. Current:`, aggregatedDataByMonth[doseMonth][`TT${ttNumber}_Bumil`]);
-                                        } else if (isCatinLainnyaDose) { // Only Catin/Lainnya for #BUMIL TT1-TT5
+                                        } else if (isCatinLainnyaDose) {
                                             aggregatedDataByMonth[doseMonth][`TT${ttNumber}_NonBumil`]++;
                                             aggregatedDataByMonth[doseMonth].totalDosesNonBumil++; 
                                             console.log(`[generateReport-User] Counted TT${ttNumber}_NonBumil for month ${doseMonth}. Current:`, aggregatedDataByMonth[doseMonth][`TT${ttNumber}_NonBumil`]);
                                         }
-                                        // Bayi/Sekolah doses are explicitly NOT counted in the report here for #BUMIL.
                                     }
                                 }
                             } else {
@@ -2964,10 +2746,10 @@ if (dosesArray.length > 0) {
                     const data = aggregatedDataByMonth[monthKey];
                     const row = reportTableBody.insertRow();
                     let rowHtml = `<td class="px-2 py-1 whitespace-nowrap sticky-col">${monthName}</td>`;
-                    ttHeaders.forEach(tt => { // Loop through TT1-TT5, TL
+                    ttHeaders.forEach(tt => {
                         rowHtml += `<td class="px-2 py-1 whitespace-nowrap">${data[`${tt}_Bumil`]}</td>`;
                     });
-                    ttHeaders.forEach(tt => { // Loop through TT1-TT5, TL
+                    ttHeaders.forEach(tt => {
                         rowHtml += `<td class="px-2 py-1 whitespace-nowrap">${data[`${tt}_NonBumil`]}</td>`;
                     });
                     rowHtml += `<td class="px-2 py-1 whitespace-nowrap">${data.totalDosesBumil}</td>`; 
@@ -2975,20 +2757,19 @@ if (dosesArray.length > 0) {
                     rowHtml += `<td class="px-2 py-1 whitespace-nowrap">${data.totalDosesBumil + data.totalDosesNonBumil}</td>`;
                     row.innerHTML = rowHtml;
 
-                    // Add to grand totals (summing up the displayed values)
                     grandTotals.TT1_Bumil += data.TT1_Bumil; grandTotals.TT1_NonBumil += data.TT1_NonBumil;
                     grandTotals.TT2_Bumil += data.TT2_Bumil; grandTotals.TT2_NonBumil += data.TT2_NonBumil;
                     grandTotals.TT3_Bumil += data.TT3_Bumil; grandTotals.TT3_NonBumil += data.TT3_NonBumil;
                     grandTotals.TT4_Bumil += data.TT4_Bumil; grandTotals.TT4_NonBumil += data.TT4_NonBumil;
                     grandTotals.TT5_Bumil += data.TT5_Bumil; grandTotals.TT5_NonBumil += data.TT5_NonBumil;
-                    grandTotals.TL_Bumil += data.TL_Bumil; grandTotals.TL_NonBumil += data.TL_NonBumil; // Sum TL
+                    grandTotals.TL_Bumil += data.TL_Bumil; grandTotals.TL_NonBumil += data.TL_NonBumil;
                     grandTotals.sumIbuHamil += data.totalDosesBumil; 
                     grandTotals.sumHashHamil += data.totalDosesNonBumil; 
                     grandTotals.sumTotal += (data.totalDosesBumil + data.totalDosesNonBumil); 
 
                     if (data.TT1_Bumil > 0 || data.TT1_NonBumil > 0 || data.TT2_Bumil > 0 || data.TT2_NonBumil > 0 || 
                         data.TT3_Bumil > 0 || data.TT3_NonBumil > 0 || data.TT4_Bumil > 0 || data.TT4_NonBumil > 0 || 
-                        data.TT5_Bumil > 0 || data.TT5_NonBumil > 0 || data.TL_Bumil > 0 || data.TL_NonBumil > 0 || // Check TL also
+                        data.TT5_Bumil > 0 || data.TT5_NonBumil > 0 || data.TL_Bumil > 0 || data.TL_NonBumil > 0 ||
                         data.totalDosesBumil > 0 || data.totalDosesNonBumil > 0) {
                         hasData = true;
                     }
@@ -3018,43 +2799,35 @@ if (dosesArray.length > 0) {
             console.error('Error generating report:', error);
             reportTableBody.innerHTML = `<tr><td colspan="17" class="text-center py-4 text-red-500">Gagal membuat laporan. Error: ${error.message}</td></tr>`;
         } finally {
-            hideLoading(); // Hide loading animation
+            window.hideLoading();
         }
     }
 
-    // NEW: Function to show the download report modal
-    function showDownloadReportModal() {
+    window.showDownloadReportModal = function() {
         const downloadModal = document.getElementById('downloadReportModal');
         const downloadMonthFilter = document.getElementById('downloadMonthFilter');
         const downloadYearFilter = document.getElementById('downloadYearFilter');
 
-        // Pre-fill the download modal filters with current report filters
         downloadMonthFilter.value = document.getElementById('monthFilter').value;
         downloadYearFilter.value = document.getElementById('yearFilter').value;
 
-        // Ensure month filter visibility matches report filter for non-admin users
-        // THIS IS THE LINE THAT WAS MODIFIED TO ALWAYS SHOW MONTH FILTER IN DOWNLOAD MODAL
         downloadMonthFilter.classList.remove('hidden'); 
-        downloadMonthFilter.previousElementSibling.classList.remove('hidden'); // Show its label too
-
+        downloadMonthFilter.previousElementSibling.classList.remove('hidden');
 
         downloadModal.classList.remove('hidden');
     }
 
-    // NEW: Function to close the download report modal
-    function closeDownloadReportModal() {
+    window.closeDownloadReportModal = function() {
         document.getElementById('downloadReportModal').classList.add('hidden');
     }
 
-    // NEW: Function to download the currently displayed recap table as CSV
-    // Fungsi untuk mengunduh tabel rekap sebagai CSV
-function downloadRecapReportCsv() {
-    showLoading();
+    window.downloadRecapReportCsv = function() {
+    window.showLoading();
 
     const table = document.getElementById('reportTable');
     if (!table) {
-        showCustomAlert('Tabel laporan tidak ditemukan.');
-        hideLoading();
+        window.showCustomAlert('Tabel laporan tidak ditemukan.');
+        window.hideLoading();
         return;
     }
 
@@ -3088,12 +2861,12 @@ function downloadRecapReportCsv() {
         });
     }
 
-    csvContent += headers.join(',') + '\n';
+    csvContent += headers.map(window.sanitizeCsvField).join(',') + '\n';
 
     const bodyRows = table.querySelectorAll('tbody tr');
     bodyRows.forEach(row => {
         const rowData = Array.from(row.querySelectorAll('td, th'))
-            .map(cell => cell.textContent.trim());
+            .map(cell => window.sanitizeCsvField(cell.textContent.trim()));
         csvContent += rowData.join(',') + '\n';
     });
 
@@ -3122,48 +2895,139 @@ function downloadRecapReportCsv() {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    showCustomAlert('Laporan Rekapitulasi berhasil diunduh!');
-    hideLoading();
+    window.showCustomAlert('Laporan Rekapitulasi berhasil diunduh!');
+    window.hideLoading();
 }
 
+// Helper: tambahkan tanda ' hanya untuk nik & noHp saat ekspor CSV
+window.prefixExcelText = function(fieldName, value) {
+    if (value == null) return "";
+    if (fieldName !== "nik" && fieldName !== "noHp") return value;
 
-    // NEW: Function to download the CSV report (now for individual data)
-    // Fungsi untuk mengunduh laporan individu dari server
-async function downloadIndividualReportCsv() {
-    closeDownloadReportModal();
-    showLoading();
+    const s = String(value).trim();
+    const normalized = s.startsWith("'") ? s.slice(1) : s; // buang ' kalau sudah ada
+    return "'" + normalized;
+};
+
+// 🔑 helper untuk parsing ttDosesDetails JSON
+function parseTtDoses(details) {
+    const result = {
+        tanggal_t1: "", status_t1: "",
+        tanggal_t2: "", status_t2: "",
+        tanggal_t3: "", status_t3: "",
+        tanggal_t4: "", status_t4: "",
+        tanggal_t5: "", status_t5: "",
+        tanggal_tl: "", status_tl: "",
+        tanggalTTterakhir: ""  // 🔑 kolom baru
+    };
+
+    if (!details) return result;
+
+    let arr = [];
+    try {
+        arr = Array.isArray(details) ? details : JSON.parse(details);
+    } catch (e) {
+        console.error("Error parsing ttDosesDetails:", e);
+        return result;
+    }
+
+    arr.forEach((dose, index) => {
+        let key = (index < 5) ? `t${index + 1}` : `tl`;
+
+        let formattedDate = "";
+        if (dose.date) {
+            const d = new Date(dose.date);
+            if (!isNaN(d)) {
+                formattedDate = d.toLocaleDateString("id-ID"); 
+            }
+        }
+
+        result[`tanggal_${key}`] = formattedDate;
+        result[`status_${key}`] = dose.source || "";
+    });
+
+    // 🔑 ambil tanggal terakhir
+    if (arr.length > 0 && arr[arr.length - 1].date) {
+        const d = new Date(arr[arr.length - 1].date);
+        if (!isNaN(d)) {
+            result.tanggalTTterakhir = d.toLocaleDateString("id-ID");
+        }
+    }
+
+    return result;
+}
+
+// 🔑 fungsi utama
+window.downloadIndividualReportCsv = async function() {
+    window.closeDownloadReportModal();
+    window.showLoading();
 
     const selectedMonth = document.getElementById('downloadMonthFilter').value;
     const selectedYear = document.getElementById('downloadYearFilter').value;
     const currentDesa = currentUserDesa;
 
     try {
-        const payload = {
-            action: 'downloadDetailedReport',
-            month: selectedMonth,
-            year: selectedYear,
-            desa: currentDesa
-        };
-
-        const response = await fetch(GOOGLE_SHEETS_WEB_APP_URL, {
-            method: 'POST',
-            mode: 'cors',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams(payload).toString(),
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
+        let dataToDownload = [...allImunisasiData];
+        if (currentDesa !== "AdminPuskesmas") {
+            dataToDownload = dataToDownload.filter(item => String(item.desaKelurahan) === String(currentDesa));
         }
 
-        const csvData = await response.text();
-        if (!csvData || csvData.trim() === '' || csvData.includes('Tidak ada data')) {
-            showCustomAlert('Tidak ada data untuk laporan pada bulan dan tahun terpilih.');
-            hideLoading();
+        dataToDownload = dataToDownload.filter(item => {
+            if (!item.tanggalLayanan) return false;
+            const itemDate = new Date(item.tanggalLayanan);
+            const itemMonth = (itemDate.getMonth() + 1).toString().padStart(2, '0');
+            const itemYear = itemDate.getFullYear().toString();
+
+            const matchMonth = !selectedMonth || itemMonth === selectedMonth;
+            const matchYear = !selectedYear || itemYear === selectedYear;
+            return matchMonth && matchYear;
+        });
+
+        if (dataToDownload.length === 0) {
+            window.showCustomAlert('Tidak ada data untuk laporan pada bulan dan tahun terpilih.');
+            window.hideLoading();
             return;
         }
 
-        const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+        // 🔑 header CSV baru
+        const headers = [
+            'uniqueId', 'nik', 'nama', 'desaKelurahan', 'alamat', 'noHp', 'tanggalLahir', 'umur',
+            'tanggalLayanan', 'tanggalTTterakhir', 'statusTt', 'jadwalDosisBerikutnya',
+            'tanggal_t1', 'status_t1',
+            'tanggal_t2', 'status_t2',
+            'tanggal_t3', 'status_t3',
+            'tanggal_t4', 'status_t4',
+            'tanggal_t5', 'status_t5',
+            'tanggal_tl', 'status_tl',
+            'catatan', 'timestamp', 'userEmail'
+        ];
+        let csvContent = headers.map(window.sanitizeCsvField).join(',') + '\n';
+
+        // 🔑 buat baris per item
+        dataToDownload.forEach(item => {
+            // pecah ttDosesDetails
+            const tt = parseTtDoses(item.ttDosesDetails);
+
+            const rowData = headers.map(header => {
+                let value = "";
+
+                if (header in item) {
+                    value = item[header];
+                } else if (header in tt) {
+                    value = tt[header];
+                }
+
+                // prefix ' untuk nik & noHp agar tidak auto-format di Excel
+                value = window.prefixExcelText(header, value);
+
+                return window.sanitizeCsvField(value);
+            });
+
+            csvContent += rowData.join(',') + '\n';
+        });
+
+        // 🔑 buat blob CSV
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -3180,20 +3044,17 @@ async function downloadIndividualReportCsv() {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
 
-        showCustomAlert('Laporan Individu berhasil diunduh!');
+        window.showCustomAlert('Laporan Individu berhasil diunduh!', null, null, true, "individu");
     } catch (error) {
         console.error(error);
-        showCustomAlert(`Gagal mengunduh laporan. Error: ${error.message}`);
+        window.showCustomAlert(`Gagal mengunduh laporan. Error: ${error.message}`);
     } finally {
-        hideLoading();
+        window.hideLoading();
     }
 }
 
 
-
-    // --- View Management Functions ---
-
-    function showView(viewId, itemData = null) {
+    window.showView = function(viewId, itemData = null) {
         console.log(`[showView] Called with viewId: ${viewId}`);
 
         const listViewEl = document.getElementById('listView');
@@ -3203,65 +3064,55 @@ async function downloadIndividualReportCsv() {
         const mainNavBarEl = document.getElementById('mainNavBar');
         const mainContainer = document.querySelector('.main-container');
 
-        // Sembunyikan semua tampilan utama terlebih dahulu
         listViewEl.classList.add('hidden');
         formViewEl.classList.add('hidden');
         reportViewEl.classList.add('hidden');
 
-        // Tampilkan tampilan yang diminta
         document.getElementById(viewId).classList.remove('hidden');
         currentView = viewId.replace('View', '');
 
         if (mainContainer) {
-            // Simpan posisi scroll hanya saat meninggalkan tampilan daftar untuk formulir/laporan
             if (viewId !== 'listView') {
-                currentScrollPosition = mainContainer.scrollTop; // Use mainContainer.scrollTop
+                currentScrollPosition = mainContainer.scrollTop;
             }
-            mainContainer.scrollTop = 0; // Gulir ke atas tampilan baru
+            mainContainer.scrollTop = 0;
         }
 
-        // Kelola visibilitas navigasi berdasarkan tampilan
-        // Top navigation bar (topNavBarEl) should ALWAYS be visible
-        topNavBarEl.classList.remove('hidden'); // Memastikan topNavBar selalu terlihat
+        topNavBarEl.classList.remove('hidden');
 
         if (viewId === 'listView' || viewId === 'reportView') {
-            mainNavBarEl.classList.remove('hidden'); // Tampilkan navigasi bawah untuk daftar dan laporan
+            mainNavBarEl.classList.remove('hidden');
         } else if (viewId === 'formView') {
-            mainNavBarEl.classList.add('hidden'); // Sembunyikan navigasi bawah untuk formulir
+            mainNavBarEl.classList.add('hidden');
         }
 
-        // Tindakan spesifik untuk setiap tampilan
         if (viewId === 'listView') {
-            document.getElementById('nameNikFilter').value = ''; // Bersihkan filter saat kembali ke tampilan daftar
-            currentPage = 1; // Atur ulang ke halaman pertama pada filter baru
-            filterAndPaginate(); // Call filterAndPaginate without parameters, it will handle default 1-year filter
+            document.getElementById('nameNikFilter').value = '';
+            currentPage = 1;
+            window.filterAndPaginate();
         } else if (viewId === 'formView') {
             const formTitle = document.getElementById('formTitle');
-            // HANYA reset form jika ini adalah entri baru (itemData adalah null)
             if (!itemData) {
                 console.log("[showView-formView] New entry mode. Resetting form.");
-                resetForm(); 
-                formTitle.innerText = "Form Skrining Baru"; // Atur judul untuk entri baru
+                window.resetForm(); 
+                formTitle.innerText = "Form Skrining Baru";
             }
             
             if (itemData) {
                 console.log("[showView-formView] Edit mode. Loading itemData:", itemData);
-                formTitle.innerText = "Form Update Skrining"; // Atur judul untuk pengeditan
+                formTitle.innerText = "Form Update Skrining";
                 
-                // Mengisi kolom formulir dengan itemData
                 document.getElementById("nama").value = itemData.nama || '';
-                document.getElementById("tanggalLahir").value = formatDateToYYYYMMDD(itemData.tanggalLahir);
+                document.getElementById("tanggalLahir").value = window.formatDateToYYYYMMDD(itemData.tanggalLahir);
                 document.getElementById("umur").value = itemData.umur || '';
                 document.getElementById("nik").value = itemData.nik || '';
                 document.getElementById("desaKelurahan").value = itemData.desaKelurahan || '';
                 document.getElementById("alamat").value = itemData.alamat || '';
-                // Hapus tanda kutip tunggal di depan untuk tampilan di formulir
-                const displayNoHp = itemData.noHp ? (String(itemData.noHp).startsWith("'") ? String(itemData.noHp).substring(1) : String(itemData.noHp)) : '';
-                document.getElementById("noHp").value = displayNoHp;
-                console.log("[showView-formView] Set noHp to:", document.getElementById("noHp").value); // Log after setting
-                
-                document.getElementById("tanggalLayanan").value = formatDateToYYYYMMDD(itemData.tanggalLayanan);
-                console.log("[showView-formView] Set tanggalLayanan to:", document.getElementById("tanggalLayanan").value); // Log after setting
+                const displayNoHp = itemData.noHp ? String(itemData.noHp) : '';
+document.getElementById("noHp").value = displayNoHp;
+console.log("[showView-formView] Set noHp to:", document.getElementById("noHp").value);             
+                document.getElementById("tanggalLayanan").value = window.formatDateToYYYYMMDD(itemData.tanggalLayanan);
+                console.log("[showView-formView] Set tanggalLayanan to:", document.getElementById("tanggalLayanan").value);
                 
                 document.getElementById("catatan").value = itemData.catatan || '';
 
@@ -3278,12 +3129,10 @@ async function downloadIndividualReportCsv() {
                     }
                 }
 
-                // Mengisi dosis historis
-                // Reset dan kemudian atur berdasarkan data
                 document.getElementById("bayiStatus").value = "Tidak";
-                toggleSub('bayiStatus', 'subBayi'); 
+                window.toggleSub('bayiStatus', 'subBayi'); 
                 document.getElementById("sekolahStatus").value = "Tidak";
-                toggleSub('sekolahStatus', 'subSekolah'); 
+                window.toggleSub('sekolahStatus', 'subSekolah'); 
 
                 dosesArray.forEach(dose => {
                     if (dose.source.startsWith('DPT')) {
@@ -3293,9 +3142,9 @@ async function downloadIndividualReportCsv() {
                         const dateInput = document.getElementById(dateInputId);
                         if (checkbox && dateInput) {
                             document.getElementById("bayiStatus").value = "Ya";
-                            toggleSub('bayiStatus', 'subBayi'); // Tampilkan bagian
+                            window.toggleSub('bayiStatus', 'subBayi');
                             checkbox.checked = true;
-                            dateInput.value = formatDateToYYYYMMDD(dose.date);
+                            dateInput.value = window.formatDateToYYYYMMDD(dose.date);
                             console.log(`[showView-formView] Set ${checkboxId} and ${dateInputId} to ${dateInput.value}`);
                         }
                     } else if (dose.source.startsWith('Kelas')) {
@@ -3305,16 +3154,16 @@ async function downloadIndividualReportCsv() {
                         const dateInput = document.getElementById(dateInputId);
                         if (checkbox && dateInput) {
                             document.getElementById("sekolahStatus").value = "Ya";
-                            toggleSub('sekolahStatus', 'subSekolah'); // Tampilkan bagian
+                            window.toggleSub('sekolahStatus', 'subSekolah');
                             checkbox.checked = true;
-                            dateInput.value = formatDateToYYYYMMDD(dose.date);
+                            dateInput.value = window.formatDateToYYYYMMDD(dose.date);
                             console.log(`[showView-formView] Set ${checkboxId} and ${dateInputId} to ${dateInput.value}`);
                         }
                     } else if (dose.source === 'Catin 1') {
-                        document.getElementById("catin1").value = formatDateToYYYYMMDD(dose.date);
+                        document.getElementById("catin1").value = window.formatDateToYYYYMMDD(dose.date);
                         console.log("[showView-formView] Set catin1 to:", document.getElementById("catin1").value);
                     } else if (dose.source === 'Catin 2') {
-                        document.getElementById("catin2").value = formatDateToYYYYMMDD(dose.date);
+                        document.getElementById("catin2").value = window.formatDateToYYYYMMDD(dose.date);
                         console.log("[showView-formView] Set catin2 to:", document.getElementById("catin2").value);
                     }
                 });
@@ -3334,22 +3183,21 @@ async function downloadIndividualReportCsv() {
                     hamilDoses.forEach((dose, index) => {
                         if (index === 0) {
                             if (initialHamilInput) {
-                                initialHamilInput.value = formatDateToYYYYMMDD(dose.date);
+                                initialHamilInput.value = window.formatDateToYYYYMMDD(dose.date);
                                 console.log(`[showView-formView] Set initial hamil input to ${initialHamilInput.value}`);
                             }
                         } else {
-                            tambahKehamilan(); // Ini menambahkan input baru
+                            window.tambahKehamilan();
                             const newInputs = hamilContainer.querySelectorAll('input[name="hamil[]"]');
                             const lastNewInput = newInputs[newInputs.length - 1];
                             if (lastNewInput) {
-                                lastNewInput.value = formatDateToYYYYMMDD(dose.date);
+                                lastNewInput.value = window.formatDateToYYYYMMDD(dose.date);
                                 console.log(`[showView-formView] Added and set new hamil input to ${lastNewInput.value}`);
                             }
                         }
                     });
                 }
 
-                // Mengisi dosis "Lainnya"
                 const lainnyaDoses = dosesArray.filter(d => d.source.startsWith('Lainnya') || d.source.startsWith('TL (Lainnya'));
                 const lainnyaContainer = document.getElementById("lainnyaContainer");
                 const initialLainnyaDateInput = lainnyaContainer.querySelector('input[name="lainnyaDate[]"]');
@@ -3367,11 +3215,9 @@ async function downloadIndividualReportCsv() {
                     lainnyaDoses.forEach((dose, index) => {
                         if (index === 0) {
                             if (initialLainnyaDateInput) {
-                                initialLainnyaDateInput.value = formatDateToYYYYMMDD(dose.date);
-                                // Ekstrak keterangan dari string sumber: "Lainnya (Keterangan)" atau "TL (Lainnya (Keterangan))"
+                                initialLainnyaDateInput.value = window.formatDateToYYYYMMDD(dose.date);
                                 const match = dose.source.match(/\((.*)\)/);
                                 if (initialLainnyaKeteranganInput && match && match[1] && !match[1].includes('Tanpa Keterangan')) {
-                                    // If source is TL (Lainnya (Keterangan)), extract the inner part
                                     const innerMatch = match[1].match(/\((.*)\)/);
                                     if (innerMatch) {
                                         initialLainnyaKeteranganInput.value = innerMatch[1];
@@ -3382,13 +3228,13 @@ async function downloadIndividualReportCsv() {
                                 console.log(`[showView-formView] Set initial lainnya date to ${initialLainnyaDateInput.value}, keterangan to ${initialLainnyaKeteranganInput.value}`);
                             }
                         } else {
-                            tambahLainnya(); // Ini menambahkan pasangan input baru
+                            window.tambahLainnya();
                             const newDateInputs = lainnyaContainer.querySelectorAll('input[name="lainnyaDate[]"]');
                             const newKeteranganInputs = lainnyaContainer.querySelectorAll('textarea[name="lainnyaKeterangan[]"]');
                             const lastNewDateInput = newDateInputs[newDateInputs.length - 1];
                             const lastNewKeteranganInput = newKeteranganInputs[newKeteranganInputs.length - 1];
                             if (lastNewDateInput) {
-                                lastNewDateInput.value = formatDateToYYYYMMDD(dose.date);
+                                lastNewDateInput.value = window.formatDateToYYYYMMDD(dose.date);
                                 const match = dose.source.match(/\((.*)\)/);
                                 if (lastNewKeteranganInput && match && match[1] && !match[1].includes('Tanpa Keterangan')) {
                                     const innerMatch = match[1].match(/\((.*)\)/);
@@ -3404,84 +3250,68 @@ async function downloadIndividualReportCsv() {
                     });
                 }
 
-                // PENTING: Panggil hitungUmur dan hitungStatusTT SETELAH semua bidang yang relevan terisi
-                hitungUmur(); 
-                hitungStatusTT(); 
+                window.hitungUmur(); 
+                window.hitungStatusTT(); 
                 console.log("[showView-formView] Called hitungUmur() and hitungStatusTT() after populating form.");
 
-                setFormEditState(true); // Nonaktifkan bagian historis untuk pengeditan
+                window.setFormEditState(true);
             } else {
-                // Mode entri baru
-                setFormEditState(false); // Pastikan semua kolom diaktifkan untuk entri baru
+                window.setFormEditState(false);
             }
-            // Bersihkan semua kesalahan validasi saat membuka formulir
-            setError('nik', 'nikError', '');
-            setError('noHp', 'noHpError', '');
-            setError('tanggalLahir', 'tanggalLahirError', '');
+            window.setError('nik', 'nikError', '');
+            window.setError('noHp', 'noHpError', '');
+            window.setError('tanggalLahir', 'tanggalLahirError', '');
         } else if (viewId === 'reportView') {
-            populateFilters(); // Pastikan filter terisi
-            // Laporan akan tampil otomatis saat halaman dibuka, jadi panggil generateReport() di sini
-            generateReport(); 
+            window.populateFilters();
+            window.generateReport(); 
         }
     }
 
-    // --- Initial Load & Event Listeners ---
-
     window.onload = () => {
-        // Event listeners untuk tombol navigasi utama
-        document.getElementById('navShowListBtn').addEventListener('click', () => showView('listView'));
-        document.getElementById('navShowReportBtn').addEventListener('click', () => showView('reportView'));
-        document.getElementById('navShowFormBtn').addEventListener('click', () => showView('formView'));
+        document.getElementById('navShowListBtn').addEventListener('click', () => window.showView('listView'));
+        document.getElementById('navShowReportBtn').addEventListener('click', () => window.showView('reportView'));
+        document.getElementById('navShowFormBtn').addEventListener('click', () => window.showView('formView'));
 
-        // Event listener untuk tombol formulir (sekarang di dalam formView)
-        document.getElementById("saveDataButtonForm").addEventListener('click', saveDataAndReturnToList); 
-        document.getElementById("closeFormBtn").addEventListener('click', () => showView('listView'));
+        // 6. Gabungkan Semuanya di Tombol "Simpan"
+        document.getElementById("saveDataButtonForm").addEventListener('click', window.saveData);
+        document.getElementById("closeFormBtn").addEventListener('click', () => window.showView('listView'));
 
-        // Event listener untuk filter laporan (generateReportBtn dihapus, jadi filter memicu laporan secara langsung)
-        document.getElementById('monthFilter').addEventListener('change', generateReport);
-        document.getElementById('yearFilter').addEventListener('change', generateReport);
+        document.getElementById('monthFilter').addEventListener('change', window.generateReport);
+        document.getElementById('yearFilter').addEventListener('change', window.generateReport);
         
-        // NEW: Event listener for the download report buttons
-        document.getElementById('downloadRecapReportBtn').addEventListener('click', downloadRecapReportCsv);
-        document.getElementById('downloadIndividualReportBtn').addEventListener('click', showDownloadReportModal);
-        // NEW: Event listener for the confirm download button inside the modal
-        document.getElementById('confirmDownloadBtn').addEventListener('click', downloadIndividualReportCsv);
+        document.getElementById('downloadRecapReportBtn').addEventListener('click', window.downloadRecapReportCsv);
+        document.getElementById('downloadIndividualReportBtn').addEventListener('click', window.showDownloadReportModal);
+        document.getElementById('confirmDownloadBtn').addEventListener('click', window.downloadIndividualReportCsv);
 
-
-        // Event listener untuk filter nama/NIK
         document.getElementById('nameNikFilter').addEventListener('input', () => {
-            currentPage = 1; // Reset ke halaman pertama pada filter baru
-            filterAndPaginate(); // Call filterAndPaginate without parameters, it will handle default 1-year filter
+            currentPage = 1;
+            window.filterAndPaginate();
         });
 
-        // Event listeners untuk tombol paginasi
         document.getElementById('prevPageBtn').addEventListener('click', () => {
             if (currentPage > 1) {
-                goToPage(currentPage + -1);
+                window.goToPage(currentPage - 1);
             }
         });
         document.getElementById('nextPageBtn').addEventListener('click', () => {
             const totalPages = Math.ceil(filteredData.length / itemsPerPage);
             if (currentPage < totalPages) {
-                goToPage(currentPage + 1);
+                window.goToPage(currentPage + 1);
             }
         });
 
-        // Event listener untuk tombol logout
-        document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+        document.getElementById('logoutBtn').addEventListener('click', window.handleLogout);
 
-        // Event listener untuk perubahan input formulir (hitung ulang status TT)
-        document.getElementById("nik").addEventListener('input', hitungStatusTT);
-        document.getElementById("nama").addEventListener('input', hitungStatusTT);
-        document.getElementById("umur").addEventListener('input', hitungStatusTT); 
-        document.getElementById("desaKelurahan").addEventListener('change', hitungStatusTT);
-        document.getElementById("alamat").addEventListener('input', hitungStatusTT);
-        document.getElementById("noHp").addEventListener('input', hitungStatusTT); 
-        document.getElementById("tanggalLayanan").addEventListener('change', hitungUmur); 
+        document.getElementById("nik").addEventListener('input', window.hitungStatusTT);
+        document.getElementById("nama").addEventListener('input', window.hitungStatusTT);
+        document.getElementById("umur").addEventListener('input', window.hitungStatusTT); 
+        document.getElementById("desaKelurahan").addEventListener('change', window.hitungStatusTT);
+        document.getElementById("alamat").addEventListener('input', window.hitungStatusTT);
+        document.getElementById("noHp").addEventListener('input', window.hitungStatusTT); 
+        document.getElementById("tanggalLayanan").addEventListener('change', window.hitungUmur); 
         document.getElementById("tanggalLahir").addEventListener('change', () => { 
-            hitungUmur();
-            hitungStatusTT();
-            // Evaluasi ulang kotak centang untuk mengisi tanggal berdasarkan tanggal lahir baru
+            window.hitungUmur();
+            window.hitungStatusTT();
             document.querySelectorAll('input[type="checkbox"][id$="_checkbox"]').forEach(checkbox => {
                 if (checkbox.checked) {
                     const dateInputId = checkbox.id.replace('_checkbox', '_date');
@@ -3498,56 +3328,41 @@ async function downloadIndividualReportCsv() {
                         else if (checkbox.id === 'kelas2_checkbox') offset = 8;
                         else if (checkbox.id === 'kelas5_checkbox') offset = 11;
                     }
-                    calculateAndFillDate(checkbox.id, dateInputId, type, offset);
+                    window.calculateAndFillDate(checkbox.id, dateInputId, type, offset);
                 }
             });
         });
-        document.getElementById("catatan").addEventListener('input', hitungStatusTT);
-
-        // Tambahkan event listener untuk mendeteksi perubahan status koneksi
-        window.addEventListener('online', () => {
-            console.log('Koneksi internet pulih!');
-            sendQueuedData(); // Coba kirim data yang tertunda
-            // loadAndRenderData(); // Muat ulang daftar setelah online (sudah dipanggil di sendQueuedData)
-            updateNetworkStatus(); // Perbarui status jaringan menjadi online
-        });
+        document.getElementById("catatan").addEventListener('input', window.hitungStatusTT);
 
         window.addEventListener('offline', () => {
             console.log('Koneksi internet terputus.');
-            showCustomAlert("Koneksi internet terputus. Data disimpan sementara secara lokal.");
-            loadAndRenderData(); // Muat ulang data (hanya dari lokal) setelah offline
-            updateNetworkStatus(); // Perbarui status jaringan menjadi offline
+            window.showCustomAlert("Koneksi internet terputus. Anda bisa terus menggunakan aplikasi secara offline.");
+            window.loadAndRenderData();
+            window.updateNetworkStatus();
         });
     };
 
-    // Fungsi pembantu untuk menyimpan data dan kembali ke list view
-    async function saveDataAndReturnToList() {
-        await saveToSheets(); // Panggil fungsi saveToSheets yang sudah ada
-        // showView('listView') akan dipanggil di dalam saveToSheets jika berhasil
+    window.saveDataAndRefreshList = async function() {
+        await window.saveData();
     }
 
-    // Fungsi untuk memperbarui indikator status jaringan
-function updateNetworkStatus() {
-    const icon = document.getElementById('networkStatusIcon');
-    const text = document.getElementById('networkStatusText');
+    window.updateNetworkStatus = function() {
+        const networkStatusIndicator = document.getElementById('networkStatusIndicator');
+        const networkStatusIcon = networkStatusIndicator.querySelector('i');
 
-    if (navigator.onLine) {
-        icon.className = 'fas fa-circle text-green-500';
-        text.textContent = 'Online';
-    } else {
-        icon.className = 'fas fa-circle text-red-500';
-        text.textContent = 'Offline';
+        if (navigator.onLine) {
+            networkStatusIcon.className = 'fas fa-wifi text-green-500';
+            document.getElementById('networkStatusText').innerText = 'Online';
+        } else {
+            networkStatusIcon.className = 'fas fa-wifi text-gray-400';
+            document.getElementById('networkStatusText').innerText = 'Offline';
+        }
+        networkStatusIndicator.classList.remove('hidden');
     }
-}
 
-// Jalankan saat halaman dibuka
-updateNetworkStatus();
+    window.updateNetworkStatus();
 
-// Event untuk update status saat koneksi berubah
-window.addEventListener('online', updateNetworkStatus);
-window.addEventListener('offline', updateNetworkStatus);
 </script>
-
 <!-- Login Modal -->
 <div id="loginModal" class="fixed inset-0 bg-gray-900 flex items-center justify-center z-50 hidden">
   <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm">
@@ -3555,17 +3370,16 @@ window.addEventListener('offline', updateNetworkStatus);
   src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Official_Logo_of_Sidenreng_Rappang_Regency.png/1044px-Official_Logo_of_Sidenreng_Rappang_Regency.png"
   alt="Logo Pemda Sidrap"
   class="
-    w-16 h-16              /* ukuran lebih kecil */
-    mx-auto block mb-0     /* posisi tengah */
-    rounded-md             /* sedikit sudut membulat */
-    drop-shadow-[2px_4px_6px_rgba(0,0,0,0.4)]  /* bayangan kontur */
+    w-16 h-16
+    mx-auto block mb-0
+    rounded-md
+    drop-shadow-[2px_4px_6px_rgba(0,0,0,0.4)]
     [transform:perspective(800px)_rotateX(5deg)_rotateY(-5deg)]
     transition-transform duration-300
     hover:scale-110 hover:rotate-0
 "
 />    <p class="text-xs text-green-800 mb-0 text-center">Puskesmas Lawawoi </p>
     <p class="text-xs text-green-800 mb-4 text-center">Kec. Watang Pulu Kab.Sidrap</p>
-    <!-- Updated SiTTa text styling -->
     <h2 class="text-5xl font-bold text-blue-900 mb-0 text-center sitta-text-shadow">siTTa</h2>
     <p class="text-sm text-blue-800 mb-4 text-center">(Skrining Imunisasi Tetanus Digital)</p>
     <label class="block mb-1 text-sm font-medium text-gray-700">Desa/Kelurahan</label>
@@ -3582,36 +3396,59 @@ window.addEventListener('offline', updateNetworkStatus);
       <option value="Mattirotasi">Mattirotasi</option>
       <option value="Uluale">Uluale</option>
       <option value="Luar Wilayah">Luar Wilayah</option>
-      <option value="AdminPuskesmas">AdminPuskesmas</option> <!-- Admin login option -->
+      <option value="AdminPuskesmas">AdminPuskesmas</option>
     </select>
 
     <label class="block mb-1 text-sm font-medium text-gray-700">Password</label>
     <input type="password" id="loginPassword" class="block w-full p-2 border rounded-lg mb-4" placeholder="Masukkan Password">
     
-    <!-- Error message for login -->
     <p id="loginErrorMessage" class="text-red-500 text-sm mt-2 text-center hidden"></p>
 
-    <button onclick="handleLogin()" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 font-semibold">
+    <button onclick="window.handleLogin()" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 font-semibold">
       Masuk
     </button>
-    <!-- New footer text for login page -->
     <p class="text-xs text-gray-500 mt-4 text-center italic font-bold">Created by Baharuddin@2025</p>
   </div>
 </div>
 
-<body>
-
-<div id="emailLoginModal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black bg-opacity-50">
-    <div class="bg-white p-6 rounded-lg shadow-xl w-80">
-        <h2 class="text-xl font-bold mb-4 text-center">Login Email</h2>
-        <p class="text-sm text-gray-600 mb-4 text-center">Masukkan email Anda untuk pertama kali menggunakan aplikasi.</p>
-        <form id="emailLoginForm">
-            <input type="email" id="userEmail" placeholder="nama@email.com" class="w-full p-2 border border-gray-300 rounded mb-4" required>
-            <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-300">Masuk</button>
-        </form>
+    <!-- Modal Login Email -->
+    <div id="emailLoginModal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black bg-opacity-50">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-80">
+            <h2 class="text-xl font-bold mb-4 text-center">Login Email</h2>
+            <p class="text-sm text-gray-600 mb-4 text-center">Masukkan email Anda untuk pertama kali menggunakan aplikasi.</p>
+            <form id="emailLoginForm">
+                <input type="email" id="userEmail" placeholder="nama@email.com" class="w-full p-2 border border-gray-300 rounded mb-4" required>
+                <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-300">Masuk</button>
+            </form>
+        </div>
     </div>
-</div>
-       <script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Cek apakah pengguna baru
+            if (!localStorage.getItem("userEmail")) {
+                // Tampilkan modal login
+                document.getElementById("emailLoginModal").classList.remove("hidden");
+            }
+
+            // Tangani submit form
+            document.getElementById("emailLoginForm").addEventListener("submit", function(e) {
+                e.preventDefault();
+                const email = document.getElementById("userEmail").value;
+                if (email) {
+                    // Simpan email ke localStorage
+                    localStorage.setItem("userEmail", email);
+                    // Sembunyikan modal setelah login
+                    document.getElementById("emailLoginModal").classList.add("hidden");
+                    alert("Email berhasil didaftarkan: " + email);
+                }
+            });
+        });
+    </script>
+
+
+
+<script>
   let deferredPrompt;
 
   window.addEventListener('beforeinstallprompt', (e) => {
@@ -3640,23 +3477,21 @@ window.addEventListener('offline', updateNetworkStatus);
 const navShowListBtn = document.getElementById("navShowListBtn");
 const navShowReportBtn = document.getElementById("navShowReportBtn");
 const fabTambah = document.getElementById("fabTambah");
-const navShowFormBtn = document.getElementById("navShowFormBtn"); // tombol form asli
+const navShowFormBtn = document.getElementById("navShowFormBtn");
 
-// Saat klik menu Register → tampilkan tombol tambah
 navShowListBtn.addEventListener("click", () => {
     fabTambah.classList.remove("hidden");
 });
 
-// Saat klik menu Laporan → sembunyikan tombol tambah
 navShowReportBtn.addEventListener("click", () => {
     fabTambah.classList.add("hidden");
 });
 
-// Klik tombol tambah (+) → buka form tambah
 fabTambah.addEventListener("click", () => {
     navShowFormBtn.click();
 });
 </script>
+
 <script>
 const emailLoginModal = document.getElementById('emailLoginModal');
 const emailLoginForm = document.getElementById('emailLoginForm');

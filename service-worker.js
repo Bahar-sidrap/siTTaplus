@@ -1,4 +1,4 @@
-const CACHE_NAME = "imunisasi-tt-cache-v1.0.2";
+const CACHE_NAME = "imunisasi-tt-cache-v1.0.3";
 const ASSETS_TO_CACHE = [
   "./",
   "./index.html",
@@ -37,5 +37,6 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
+
 
 

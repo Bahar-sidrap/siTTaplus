@@ -465,16 +465,20 @@
   </button>
 
   <!-- Logo & Tulisan di tengah -->
-  <div class="flex justify-center items-center space-x-1 text-sm leading-tight text-white">
-    <img 
-      src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Official_Logo_of_Sidenreng_Rappang_Regency.png/1044px-Official_Logo_of_Sidenreng_Rappang_Regency.png"
-      alt="Logo Pemda Sidrap"
-      class="h-5 md:h-6 mr-1"
-    >
-    <span class="font-bold text-blue-800">siTTa -</span>
-    <span id="loggedInDesa" class="ml-1 font-semibold capitalize text-gray-800"></span>
-    <span id="loggedInEmail" class="ml-1 text-xs italic text-gray-600"></span>
-  </div>
+<div 
+  class="fixed top-0 left-0 right-0 z-30 
+         flex justify-center items-center space-x-1 
+         text-sm leading-tight bg-white shadow-md p-1"
+>
+  <img 
+    src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Official_Logo_of_Sidenreng_Rappang_Regency.png/1044px-Official_Logo_of_Sidenreng_Rappang_Regency.png"
+    alt="Logo Pemda Sidrap"
+    class="h-5 md:h-6 mr-1"
+  >
+  <span class="font-bold text-blue-800">siTTa -</span>
+  <span id="loggedInDesa" class="ml-1 font-semibold capitalize text-gray-800"></span>
+  <span id="loggedInEmail" class="ml-1 text-xs italic text-gray-600"></span>
+</div>
 
 </header>
 
@@ -924,7 +928,7 @@ if (loggedInEmailSpan && userEmail) {
         updateFontSizeControls();
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded', async () => {
         console.log("[DOMContentLoaded] Fired.");
         console.log("[DOMContentLoaded] Initial currentUserDesa from localStorage:", localStorage.getItem('userDesa'));
         console.log("[DOMContentLoaded] Initial isLoggedIn from localStorage:", localStorage.getItem('isLoggedIn'));
@@ -941,6 +945,9 @@ if (loggedInEmailSpan && userEmail) {
             console.log("[DOMContentLoaded] Offline login successful. Showing main content.");
             setAppUI(true); // Tampilkan main content area
             // showView('listView') akan menangani visibilitas topNavBar dan mainNavBar
+        // Muat data + siapkan filter lebih dulu
+        await loadAndRenderData();
+        populateFilters();
             showView('listView'); 
             document.getElementById('loggedInDesa').innerText = currentUserDesa;
         } else {
@@ -3234,8 +3241,20 @@ async function downloadIndividualReportCsv() {
         if (viewId === 'listView') {
             document.getElementById('nameNikFilter').value = ''; // Bersihkan filter saat kembali ke tampilan daftar
             currentPage = 1; // Atur ulang ke halaman pertama pada filter baru
-            filterAndPaginate(); // Call filterAndPaginate without parameters, it will handle default 1-year filter
-        } else if (viewId === 'formView') {
+                // Jika data belum ada tapi user sudah login, muat data dulu lalu render
+    if ((!allImunisasiData || allImunisasiData.length === 0) && currentUserDesa) {
+        const loadingMessageElement = document.getElementById('loadingMessage');
+        if (loadingMessageElement) {
+            loadingMessageElement.classList.remove('hidden');
+            loadingMessageElement.innerText = 'Memuat data.';
+        }
+        loadAndRenderData(); // ini akan memanggil filterAndPaginate() di akhir
+        return; // hentikan eksekusi cabang ini sampai data selesai dimuat
+    }
+
+    // Jika data sudah ada, langsung render daftar
+    filterAndPaginate();
+} else if (viewId === 'formView') {
             const formTitle = document.getElementById('formTitle');
             // HANYA reset form jika ini adalah entri baru (itemData adalah null)
             if (!itemData) {

@@ -2337,6 +2337,8 @@ if (loggedInEmailSpan && userEmail) {
 
 
         // Handle historical dose sections (Bayi, Sekolah) - these should be disabled in edit mode
+//menghapus pembatasan pada section status bayi dan sekolah saat mode edit diaktifkan
+ /*
         const historicalSectionElements = [
             document.getElementById('bayiStatus'),
             document.getElementById('sekolahStatus'),
@@ -2351,7 +2353,7 @@ if (loggedInEmailSpan && userEmail) {
                 element.classList.toggle('cursor-not-allowed', isEditing);
             }
         });
-
+*/
         // Handle Catin, Hamil, and Lainnya sections - these should be editable in edit mode
         const editableDoseSections = [
             document.getElementById('catin1'),
